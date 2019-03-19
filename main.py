@@ -33,7 +33,7 @@ def train(model, device, train_loader, optimizer, epoch):
         _, output = model(data)
         # print(output.requires_grad)
 
-        loss = torch.nn.MSELoss()(output[:, -15:, :], target[:, -15:, :])
+        loss = torch.nn.MSELoss()(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
