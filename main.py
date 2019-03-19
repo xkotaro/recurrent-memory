@@ -28,7 +28,7 @@ def train(model, device, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         data = Variable(data)
         target = Variable(target)
-        # print(target.requires_grad)
+        print(data.requires_grad)
         optimizer.zero_grad()
         _, output = model(data)
         # print(output.requires_grad)
