@@ -9,7 +9,7 @@ class DelayedEstimationTask(Dataset):
     """Parameters"""
 
     def __init__(self, max_iter=None, n_loc=1, n_in=25, n_out=1, stim_dur=10, delay_dur=100, resp_dur=10,
-                 kappa=2.0, spon_rate=0.001, transform=None):
+                 kappa=2.0, spon_rate=0.1, transform=None):
         super(DelayedEstimationTask, self).__init__()
         self.n_in = n_in  # number of neurons per location
         self.n_out = n_out

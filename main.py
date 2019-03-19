@@ -10,11 +10,17 @@ from torch.autograd import Variable
 from datagenerator import DelayedEstimationTask
 from model import RecurrentNet
 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 def train(model, device, train_loader, optimizer, epoch):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
         data, target, si = data_batched
+        # sns.heatmap(data.data[0])
+        # plt.show()
+
         data = data.float()
         target = target.float()
         data.requires_grad = True
@@ -35,7 +41,7 @@ def train(model, device, train_loader, optimizer, epoch):
             print(output.data[0][-10:])
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader), loss.item()))
-
+        
 
 def test(model, device, test_loader):
     model.eval()
@@ -74,9 +80,9 @@ def main():
     ])
 
     train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=30,
-                                          resp_dur=25, kappa=2.0, spon_rate=0.001)
+                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
-                                         resp_dur=25, kappa=2.0, spon_rate=0.001)
+                                         resp_dur=25, kappa=2.0, spon_rate=0.1)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
     test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)
