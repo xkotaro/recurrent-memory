@@ -40,10 +40,17 @@ def test(model, device, test_loader):
     test_loss = 0
     correct = 0
     with torch.no_grad():
-        for data, target, si, opt in test_loader:
+        for data, data_batched in test_loader:
+            data, target, si = data_batched
+            data = data.float()
+            target = target.float()
             data, target = data.to(device), target.to(device)
-            output = model(data)
-            test_loss += torch.nn.MSELoss(output[-25:], target[-25:])
+            data = Variable(data)
+            target = Variable(target)
+            # print(target.requires_grad)
+            _, output = model(data)
+            # print(output.requires_grad)
+            test_loss += torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
 
