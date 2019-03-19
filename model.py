@@ -12,7 +12,7 @@ class RecurrentNet(nn.Module):
         self.n_hid = n_hid
         self.n_out = n_out
         self.in_layer = nn.Linear(n_in, n_hid)
-        self.hid_layer = nn.RNNCell(n_hid, n_hid, nonlinearity='tanh')
+        self.hid_layer = nn.RNNCell(n_hid, n_hid, nonlinearity='relu')
         self.out_layer = nn.Linear(n_hid, n_out)
 
     def forward(self, input_signal):
@@ -26,7 +26,7 @@ class RecurrentNet(nn.Module):
         for t in range(length):
             x = self.in_layer(input_signal[t])
             hidden = self.hid_layer(x, hidden)
-            output = F.sigmoid(self.out_layer(hidden))
+            output = self.out_layer(hidden)
             hidden_list[t] = hidden
             output_list[t] = output
         hidden_list = hidden_list.permute(1, 0, 2)
