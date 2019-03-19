@@ -53,7 +53,7 @@ class DelayedEstimationTask(Dataset):
 
         # print(R1.shape)
 
-        example_input = np.concatenate((R1, Rd, Rr), axis=0)
+        example_input = np.concatenate((Rr, Rd, Rr), axis=0)
         # print(example_input.shape)
         example_output = np.repeat(S, self.total_dur, axis=0)
         example_output = np.expand_dims(example_output, 1)
