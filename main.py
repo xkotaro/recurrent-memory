@@ -58,7 +58,7 @@ def test(model, device, test_loader):
             # print(target.requires_grad)
             _, output = model(data)
             # print(output.requires_grad)
-            test_loss += torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
+            test_loss += torch.nn.BCELoss()(output[:, -25:, :], target[:, -25:, :])
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
 
