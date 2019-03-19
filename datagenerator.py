@@ -32,14 +32,14 @@ class DelayedEstimationTask(Dataset):
         G = (1.0 / self.stim_dur) * np.random.choice([1.0], self.n_loc)
         G = np.repeat(G, self.n_in, axis=0).T
         G = np.tile(G, (self.stim_dur, 1))
-        G = np.swapaxes(G, 0, 1)
+        # print(G.shape)
 
         S1 = np.pi * np.random.rand(self.n_loc)
 
         S = S1.copy()  # S: signal
         S1 = np.repeat(S1, self.n_in, axis=0).T
-        S1 = np.tile(S1, (self.stim_dur, 1, 1))
-        S1 = np.swapaxes(S1, 0, 1)
+        S1 = np.tile(S1, (self.stim_dur, 1))
+        # print(S1.shape)
 
         # Noisy responses
         L1 = G * np.exp(self.kappa * (np.cos(
@@ -51,17 +51,16 @@ class DelayedEstimationTask(Dataset):
         Rd = np.random.poisson(Ld)
         Rr = np.random.poisson(Lr)
 
-        example_input = np.concatenate((R1, Rd, Rr), axis=1)
-        example_output = np.repeat(S[:, np.newaxis, :], self.total_dur, axis=1)
+        # print(R1.shape)
 
-        cum_R1 = np.sum(R1, axis=1)
-        mu_x = np.asarray([np.arctan2(np.dot(cum_R1[:, i * self.n_in:(i + 1) * self.n_in], np.sin(2.0 * self.phi)),
-                                      np.dot(cum_R1[:, i * self.n_in:(i + 1) * self.n_in], np.cos(2.0 * self.phi))) for
-                           i in range(self.n_loc)]) / 2.0
-        mu_x = (mu_x > 0.0) * mu_x + (mu_x < 0.0) * (mu_x + np.pi)
-        mu_x = mu_x.T
+        example_input = np.concatenate((R1, Rd, Rr), axis=0)
+        # print(example_input.shape)
+        example_output = np.repeat(S, self.total_dur, axis=0)
+        example_output = np.expand_dims(example_output, 1)
+        # print(example_output.shape)
 
         if self.transform:
             example_input = self.transform(example_input)
+            example_output = self.transform(example_output)
 
-        return example_input, example_output, S, mu_x
+        return example_input, example_output, S

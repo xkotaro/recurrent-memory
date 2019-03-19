@@ -13,14 +13,24 @@ from model import RecurrentNet
 
 def train(model, device, train_loader, optimizer, epoch):
     model.train()
-    for batch_idx, (data, target, si, opt) in enumerate(train_loader):
+    for batch_idx, data_batched in enumerate(train_loader):
+        data, target, si = data_batched
+        data = data.float()
+        target = target.float()
         data, target = data.to(device), target.to(device)
+        data = Variable(data)
+        target = Variable(target)
+        # print(target.requires_grad)
         optimizer.zero_grad()
         _, output = model(data)
-        loss = torch.nn.MSELoss(output[-25:], target[-25:])
+        # print(output.requires_grad)
+
+        loss = torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
+            print(target.data[0][0])
+            print(output.data[0][-10:])
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader), loss.item()))
 
@@ -54,9 +64,9 @@ def main():
     ])
 
     train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
-                                          resp_dur=25, kappa=2.0, spon_rate=0.001, transform=transform)
+                                          resp_dur=25, kappa=2.0, spon_rate=0.001)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
-                                         resp_dur=25, kappa=2.0, spon_rate=0.001, transform=transform)
+                                         resp_dur=25, kappa=2.0, spon_rate=0.001)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
     test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)

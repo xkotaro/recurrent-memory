@@ -94,10 +94,12 @@ class DelayedEstimationTask(Task):
         print(G.shape)
         print(G[0][1])
         print(L1[0][1])
-        print(R1[0][1])
+        print("R1.shape: ", R1.shape)
 
         example_input = np.concatenate((R1, Rd, Rr), axis=1)
         example_output = np.repeat(S[:, np.newaxis, :], self.total_dur, axis=1)
+
+        print("example_output.shape: ", example_output.shape)
 
         cum_R1 = np.sum(R1, axis=1)
         print(cum_R1.shape)
