@@ -26,7 +26,7 @@ class RecurrentNet(nn.Module):
         # print(input_signal.shape)
         for t in range(length):
             x = F.relu(self.in_layer(input_signal[t]))
-            hidden = F.relu(self.hid_layer(x, hidden))
+            hidden = self.hid_layer(x, hidden)
             output = self.out_layer(hidden)
             hidden_list[t] = hidden
             output_list[t] = output
