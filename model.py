@@ -19,7 +19,6 @@ class RecurrentNet(nn.Module):
         num_batch = input_signal.size(0)
         length = input_signal.size(1)
         hidden = Variable(torch.zeros(num_batch, self.n_hid).type_as(input_signal.data))
-        # print(hidden.requires_grad)
         hidden_list = Variable(torch.zeros(length, num_batch, self.n_hid).type_as(input_signal.data))
         output_list = Variable(torch.zeros(length, num_batch, self.n_out).type_as(input_signal.data))
         input_signal = input_signal.permute(1, 0, 2)
