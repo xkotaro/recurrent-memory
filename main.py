@@ -33,7 +33,7 @@ def train(model, device, train_loader, optimizer, epoch):
         _, output = model(data)
         # print(output.requires_grad)
 
-        loss = torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
+        loss = torch.nn.MSELoss()(output[:, -15:, :], target[:, -15:, :])
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
@@ -79,8 +79,8 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
-                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
+    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=15, delay_dur=10,
+                                          resp_dur=15, kappa=2.0, spon_rate=0.1)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
 
