@@ -84,7 +84,7 @@ def main():
 
     for epoch in range(1, args.epochs + 1):
         train(model, device, train_loader, optimizer, epoch)
-        test(model, device, test_loader)
+        # test(model, device, test_loader)
 
     if args.save_model:
         torch.save(model.state_dict(), "recurrent_memory.pt")
