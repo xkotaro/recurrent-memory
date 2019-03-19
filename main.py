@@ -79,7 +79,7 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=5,
+    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                           resp_dur=25, kappa=2.0, spon_rate=0.1)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
@@ -106,8 +106,8 @@ if __name__ == '__main__':
                         help='input batch size for testing (default: 50)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
                         help='number of epochs to train (default: 10)')
-    parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
-                        help='learning rate (default: 0.001)')
+    parser.add_argument('--lr', type=float, default=0.0005, metavar='LR',
+                        help='learning rate (default: 0.0005)')
     parser.add_argument('--no_cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
