@@ -12,7 +12,7 @@ class RecurrentNet(nn.Module):
         self.n_hid = n_hid
         self.n_out = n_out
         self.in_layer = nn.Linear(n_in, n_hid)
-        self.hid_layer = nn.LSTM(n_hid, n_hid)
+        self.hid_layer = nn.RNN(n_hid, n_hid, nonlinearity='relu')
         self.out_layer = nn.Linear(n_hid, n_out)
 
     def forward(self, input_signal):
