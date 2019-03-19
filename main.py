@@ -71,7 +71,7 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
+    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=30,
                                           resp_dur=25, kappa=2.0, spon_rate=0.001)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                          resp_dur=25, kappa=2.0, spon_rate=0.001)
@@ -80,7 +80,7 @@ def main():
     test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)
 
     model = RecurrentNet(n_in=50, n_hid=500, n_out=1).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
         train(model, device, train_loader, optimizer, epoch)
