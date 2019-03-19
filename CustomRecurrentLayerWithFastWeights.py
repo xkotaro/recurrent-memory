@@ -11,8 +11,10 @@ from lasagne.utils import unroll_scan
 from lasagne.layers import Layer, InputLayer, MergeLayer
 from lasagne.layers import helper
 
+
 class CustomRecurrentLayerWithFastWeights(MergeLayer):
     """ """
+
     def __init__(self, incoming, input_to_hidden, hidden_to_hidden,
                  nonlinearity=nonlinearities.rectify,
                  hid_init=init.Constant(0.),
@@ -36,10 +38,10 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
         self.hid_init_incoming_index = -1
         if mask_input is not None:
             incomings.append(mask_input)
-            self.mask_incoming_index = len(incomings)-1
+            self.mask_incoming_index = len(incomings) - 1
         if isinstance(hid_init, Layer):
             incomings.append(hid_init)
-            self.hid_init_incoming_index = len(incomings)-1
+            self.hid_init_incoming_index = len(incomings) - 1
 
         super(CustomRecurrentLayerWithFastWeights, self).__init__(incomings, **kwargs)
 
@@ -90,7 +92,7 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
                 input_shape[0] is not None and
                 input_shape[1] is not None and
                 (input_to_hidden.output_shape[0] !=
-                 input_shape[0]*input_shape[1])):
+                 input_shape[0] * input_shape[1])):
             raise ValueError(
                 'When precompute_input == True, '
                 'input_to_hidden.output_shape[0] must equal '
@@ -99,7 +101,7 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
                 'input_to_hidden.output_shape[0] = {} and '
                 'incoming.output_shape[0]*incoming.output_shape[1] = '
                 '{}'.format(input_to_hidden.output_shape[0],
-                            input_shape[0]*input_shape[1]))
+                            input_shape[0] * input_shape[1]))
 
         # Check that the first dimension of input_to_hidden and
         # hidden_to_hidden's outputs match when we won't precompute the input
@@ -127,8 +129,8 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
                              "hidden_to_hidden must be equal after the first "
                              "dimension, but input_to_hidden.output_shape={} "
                              "and hidden_to_hidden.output_shape={}".format(
-                                 input_to_hidden.output_shape,
-                                 hidden_to_hidden.output_shape))
+                input_to_hidden.output_shape,
+                hidden_to_hidden.output_shape))
 
         # Check that input_to_hidden's output shape is the same as
         # hidden_to_hidden's input shape but don't check a dimension if it's
@@ -226,7 +228,7 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
             # This strange use of a generator in a tuple was because
             # input.shape[2:] was raising a Theano error
             trailing_dims = tuple(input.shape[n] for n in range(2, input.ndim))
-            input = T.reshape(input, (seq_len*num_batch,) + trailing_dims)
+            input = T.reshape(input, (seq_len * num_batch,) + trailing_dims)
             input = helper.get_output(self.input_to_hidden, input, **kwargs)
 
             # Reshape back to (seq_len, batch_size, trailing dimensions...)
@@ -257,11 +259,11 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
             if self.grad_clipping:
                 hid_pre = theano.gradient.grad_clip(hid_pre, -self.grad_clipping, self.grad_clipping)
 
-            hid_pre += self.gamma * hid_prevprev * T.clip(T.tile(T.reshape(T.diagonal(T.dot(hid_prevprev, hid_previous.T)),
-                                                      (1,hid_previous.shape[0])), (hid_previous.shape[1],1)).T, 0.0, 100.0)
+            hid_pre += self.gamma * hid_prevprev * T.clip(
+                T.tile(T.reshape(T.diagonal(T.dot(hid_prevprev, hid_previous.T)),
+                                 (1, hid_previous.shape[0])), (hid_previous.shape[1], 1)).T, 0.0, 100.0)
 
-            return self.nonlinearity( hid_pre )
-
+            return self.nonlinearity(hid_pre)
 
         def step_masked(input_n, mask_n, hid_previous, *args):
             # Skip over any input with mask 0 by copying the previous
@@ -294,7 +296,7 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
             hid_out = unroll_scan(
                 fn=step_fun,
                 sequences=sequences,
-                outputs_info=[dict(initial=T.zeros((2,num_batch,500)),taps=[-2,-1])],
+                outputs_info=[dict(initial=T.zeros((2, num_batch, 500)), taps=[-2, -1])],
                 go_backwards=self.backwards,
                 non_sequences=non_seqs,
                 n_steps=input_shape[1])[0]
@@ -305,7 +307,7 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
                 fn=step_fun,
                 sequences=sequences,
                 go_backwards=self.backwards,
-                outputs_info=[dict(initial=T.zeros((2,num_batch,500)),taps=[-2,-1])],
+                outputs_info=[dict(initial=T.zeros((2, num_batch, 500)), taps=[-2, -1])],
                 non_sequences=non_seqs,
                 truncate_gradient=self.gradient_steps,
                 strict=True)[0]
@@ -322,4 +324,4 @@ class CustomRecurrentLayerWithFastWeights(MergeLayer):
             if self.backwards:
                 hid_out = hid_out[:, ::-1]
 
-        return hid_out    
+        return hid_out

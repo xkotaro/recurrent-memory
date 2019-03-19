@@ -1,0 +1,10 @@
+/Users/kohei/.pyenv/versions/anaconda3-5.1.0/lib/python3.6/site-packages/lasagne/layers/helper.py:216: UserWarning: get_output() was called with unused kwargs:
+	get_details
+  % "\n\t".join(suggestions))
+Batch #0; X-ent: 1.389144; Inf. loss: 8.745151
+Batch #500; X-ent: 0.791309; Inf. loss: 3.992908
+Batch #1000; X-ent: 0.649936; Inf. loss: 3.631811
+Batch #1500; X-ent: 0.767491; Inf. loss: 3.484859
+Batch #2000; X-ent: 0.860632; Inf. loss: 3.621170
+Batch #2500; X-ent: 0.736796; Inf. loss: 3.456422
+Batch #3000; X-ent: 0.811903; Inf. loss: 3.723305
