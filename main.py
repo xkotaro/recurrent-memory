@@ -17,6 +17,8 @@ def train(model, device, train_loader, optimizer, epoch):
         data, target, si = data_batched
         data = data.float()
         target = target.float()
+        data.requires_grad = True
+        target.requires_grad = True
         data, target = data.to(device), target.to(device)
         data = Variable(data)
         target = Variable(target)
