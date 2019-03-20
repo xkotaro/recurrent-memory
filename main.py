@@ -32,7 +32,7 @@ def train(model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         _, output = model(data)
         # print(output.requires_grad)
-        zero_mask = torch.zeros(args.barch_size, 35, 1)
+        zero_mask = torch.zeros(args.batch_size, 35, 1)
         one_mask = torch.ones(args.batch_size, 25, 1)
         mask = torch.concat(zero_mask, one_mask, axis=1)
         print(mask.shape)
