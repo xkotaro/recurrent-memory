@@ -32,7 +32,7 @@ def train(model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         _, output = model(data)
         # print(output.requires_grad)
-        zero_mask = torch.zeros(args.barch_size, 75, 1)
+        zero_mask = torch.zeros(args.barch_size, 35, 1)
         one_mask = torch.ones(args.batch_size, 25, 1)
         mask = torch.concat(zero_mask, one_mask, axis=1)
         print(mask.shape)
@@ -85,7 +85,7 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=50,
+    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=10,
                                           resp_dur=25, kappa=2.0, spon_rate=0.1)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
