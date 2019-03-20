@@ -39,7 +39,7 @@ def train(model, device, train_loader, optimizer, epoch):
         # print(mask.shape)
         # output = output*mask
         # target = target*mask
-        loss = torch.nn.MSELoss()(output[:, 10:, :], target[:, 10:, :])
+        loss = torch.nn.MSELoss()(output[:, 5:, :], target[:, 5:, :])
         # loss = torch.nn.MSELoss()(output, target)
         loss.backward()
         optimizer.step()
