@@ -23,7 +23,7 @@ class RecurrentNet(nn.Module):
         output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
         input_signal = input_signal.permute(1, 0, 2)
         # print(input_signal.shape)
-        alpha = torch.Tensor([0.1])
+        alpha = torch.Tensor([0.05])
         alpha = alpha.to('cuda')
         for t in range(length):
             x = self.in_layer(input_signal[t])

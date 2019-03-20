@@ -39,7 +39,7 @@ def train(model, device, train_loader, optimizer, epoch):
         # print(mask.shape)
         # output = output*mask
         # target = target*mask
-        loss = torch.nn.MSELoss()(output, target)
+        loss = torch.nn.MSELoss()(output[:, 10:, :], target[:, 10:, :])
         # loss = torch.nn.MSELoss()(output, target)
         loss.backward()
         optimizer.step()
@@ -47,7 +47,8 @@ def train(model, device, train_loader, optimizer, epoch):
             print(target.data[0][-1])
             print(output.data[0][-10:])
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader), loss.item()))
+                epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
+                loss.item()))
 
 
 def test(model, device, test_loader):
@@ -86,7 +87,7 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=10,
+    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                           resp_dur=25, kappa=2.0, spon_rate=0.1)
     test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
