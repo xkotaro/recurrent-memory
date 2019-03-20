@@ -32,9 +32,14 @@ def train(model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         _, output = model(data)
         # print(output.requires_grad)
-
-        # loss = torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
+        zero_mask = torch.zeros(args.barch_size, 75, 1)
+        one_mask = torch.ones(args.batch_size, 25, 1)
+        mask = torch.concat(zero_mask, one_mask, axis=1)
+        print(mask.shape)
+        output = output*mask
+        target = target*mask
         loss = torch.nn.MSELoss()(output, target)
+        # loss = torch.nn.MSELoss()(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
