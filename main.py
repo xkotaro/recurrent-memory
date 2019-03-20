@@ -34,7 +34,7 @@ def train(model, device, train_loader, optimizer, epoch):
         # print(output.requires_grad)
         zero_mask = torch.zeros(args.batch_size, 35, 1)
         one_mask = torch.ones(args.batch_size, 25, 1)
-        mask = torch.concat(zero_mask, one_mask, axis=1)
+        mask = torch.cat(zero_mask, one_mask, axis=1)
         print(mask.shape)
         output = output*mask
         target = target*mask
