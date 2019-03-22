@@ -85,7 +85,7 @@ def main():
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
     test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)
 
-    model = RecurrentNet(n_in=50, n_hid=500, n_out=1).to(device)
+    model = RecurrentNet(n_in=100, n_hid=500, n_out=1).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
