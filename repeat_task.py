@@ -18,9 +18,7 @@ def train(model, device, train_loader, optimizer, epoch):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
         data, target = data_batched
-        print(target[0])
-        sns.heatmap(data[0])
-        """
+
         data = data.float()
         target = target.float()
         data.requires_grad = True
@@ -41,7 +39,6 @@ def train(model, device, train_loader, optimizer, epoch):
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
-        """
 
 
 def test(model, device, test_loader):
