@@ -39,6 +39,7 @@ def train(model, device, train_loader, optimizer, epoch, resp_dur, n_stim):
             print('\n')
             for i in range(n_stim, 0, -1):
                 print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+            print("\n")
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
