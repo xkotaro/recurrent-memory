@@ -30,14 +30,13 @@ def train(model, device, train_loader, optimizer, epoch, resp_dur, n_stim):
         optimizer.zero_grad()
         _, output = model(data)
 
-        loss = torch.nn.MSELoss()(output[:, -resp_dur*n_stim:, :], target[:, -resp_dur*n_stim:, :])
+        loss = torch.nn.MSELoss()(output[:, -resp_dur * n_stim:, :], target[:, -resp_dur * n_stim:, :])
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
-            print(target.cpu().data[0][-30].numpy()[0], target.cpu().data[0][-20].numpy()[0],
-                  target.cpu().data[0][-10].numpy()[0])
-            print(output.cpu().data[0][-30].numpy()[0], output.cpu().data[0][-20].numpy()[0],
-                  output.cpu().data[0][-10].numpy()[0])
+            for i in range(n_stim, 0, -1):
+                print(target.cpu().data[0][-int(resp_dur * (i + 1))].numpy()[0], ' ')
+                print(output.cpu().data[0][-int(resp_dur * (i + 1))].numpy()[0], ' ')
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
