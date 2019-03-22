@@ -8,11 +8,10 @@ import scipy.stats as scistat
 class DelayedEstimationTask(Dataset):
     """Parameters"""
 
-    def __init__(self, max_iter=None, n_loc=1, n_in=25, n_out=1, stim_dur=10, delay_dur=100, resp_dur=10,
+    def __init__(self, max_iter=None, n_loc=1, n_in=25, stim_dur=10, delay_dur=100, resp_dur=10,
                  kappa=2.0, spon_rate=0.1, each_stim_dur=15, transform=None):
         super(DelayedEstimationTask, self).__init__()
         self.n_in = n_in  # number of neurons per location
-        self.n_out = n_out
         self.n_loc = n_loc
         self.kappa = kappa
         self.spon_rate = spon_rate
@@ -33,7 +32,6 @@ class DelayedEstimationTask(Dataset):
         G = (1.0 / self.stim_dur) * np.random.choice([1.0], self.n_loc)
         G = np.repeat(G, self.n_in, axis=0).T
         G = np.tile(G, (self.stim_dur, 1))
-        # print(G.shape)
 
         S1 = np.pi * np.random.rand(self.n_loc)
 
@@ -67,10 +65,23 @@ class DelayedEstimationTask(Dataset):
         return example_input, example_output, S
 
 
-class RepeatSignals(DelayedEstimationTask):
-    def __init__(self, each_stim_dur):
-        super(RepeatSignals, self).__init__(each_stim_dur)
-        self.total_dur = each_stim_dur*4
+class RepeatSignals(Dataset):
+    def __init__(self, max_iter=None, n_loc=1, n_in=25, stim_dur=10, delay_dur=100, resp_dur=10,
+                 kappa=2.0, spon_rate=0.1, each_stim_dur=15, transform=None):
+        super(RepeatSignals, self).__init__()
+        self.n_in = n_in  # number of neurons per location
+        self.n_loc = n_loc
+        self.kappa = kappa
+        self.spon_rate = spon_rate
+        self.nneuron = self.n_in * self.n_loc  # total number of input neurons
+        self.phi = np.linspace(0, np.pi, self.n_in)
+        self.stim_dur = stim_dur
+        self.delay_dur = delay_dur
+        self.resp_dur = resp_dur
+        self.total_dur = stim_dur + delay_dur + resp_dur
+        self.max_iter = max_iter
+        self.transform = transform
+        self.each_stim_dur = each_stim_dur
 
     def __len__(self):
         return self.max_iter

@@ -18,9 +18,8 @@ def train(model, device, train_loader, optimizer, epoch):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
         data, target = data_batched
-        print(data.shape)
+        print(target[0])
         sns.heatmap(data[0])
-        plt.show()
         """
         data = data.float()
         target = target.float()
@@ -43,6 +42,7 @@ def train(model, device, train_loader, optimizer, epoch):
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
         """
+
 
 def test(model, device, test_loader):
     model.eval()
@@ -80,10 +80,10 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
-                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
-    test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
-                                         resp_dur=25, kappa=2.0, spon_rate=0.1)
+    train_dataset = RepeatSignals(max_iter=25000, n_loc=1, n_in=100, stim_dur=25, delay_dur=100,
+                                  resp_dur=25, kappa=5.0, spon_rate=0.08, each_stim_dur=15)
+    test_dataset = RepeatSignals(max_iter=2500, n_loc=1, n_in=100, stim_dur=25, delay_dur=100,
+                                 resp_dur=25, kappa=5.0, spon_rate=0.08, each_stim_dur=15)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
     test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)

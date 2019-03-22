@@ -81,9 +81,9 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
+    train_dataset = DelayedEstimationTask(max_iter=25000, n_loc=1, n_in=50, n_out=1, stim_dur=25, delay_dur=100,
                                           resp_dur=25, kappa=2.0, spon_rate=0.1)
-    test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=50, stim_dur=25, delay_dur=100,
+    test_dataset = DelayedEstimationTask(max_iter=2500, n_loc=1, n_in=50, n_out=1, stim_dur=25, delay_dur=100,
                                          resp_dur=25, kappa=2.0, spon_rate=0.1)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
