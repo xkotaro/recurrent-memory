@@ -105,6 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--n_stim', type=int, default=3)
     parser.add_argument('--resp_dur', type=int, default=10)
     parser.add_argument('--t_constant', type=float, default=0.2)
+    parser.add_argument('--network_size', type=int, default=500)
     parser.add_argument('--test_batch_size', type=int, default=50, metavar='N',
                         help='input batch size for testing (default: 50)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
