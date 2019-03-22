@@ -34,8 +34,8 @@ def train(model, device, train_loader, optimizer, epoch):
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
-            print(target.data[0][-15].numpy(), target.data[0][-10].numpy(), target[0][-5].numpy())
-            print(output.data[0][-15:].numpy())
+            print(target.cpu().data[0][-15].numpy(), target.cpu().data[0][-10].numpy(), target.cpu()[0][-5].numpy())
+            print(output.cpu().data[0][-15:].numpy())
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
