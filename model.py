@@ -7,10 +7,11 @@ from torch.autograd import Variable
 
 
 class RecurrentNet(nn.Module):
-    def __init__(self, n_in, n_out, n_hid):
+    def __init__(self, n_in, n_out, n_hid, t_constant):
         super(RecurrentNet, self).__init__()
         self.n_hid = n_hid
         self.n_out = n_out
+        self.t_constant = t_constant
         self.in_layer = nn.Linear(n_in, n_hid)
         self.hid_layer = nn.RNNCell(n_hid, n_hid, nonlinearity='relu')
         self.out_layer = nn.Linear(n_hid, n_out)
@@ -23,7 +24,7 @@ class RecurrentNet(nn.Module):
         output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
         input_signal = input_signal.permute(1, 0, 2)
         # print(input_signal.shape)
-        alpha = torch.Tensor([0.25])
+        alpha = torch.Tensor([self.t_constant])
         alpha = alpha.to('cuda')
         for t in range(length):
             x = self.in_layer(input_signal[t])
