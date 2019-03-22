@@ -7,7 +7,7 @@ import torch.utils.data
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 
-from datagenerator import DelayedEstimationTask
+from datagenerator import DelayedEstimationTask, RepeatSignals
 from model import RecurrentNet
 
 import seaborn as sns
@@ -17,8 +17,11 @@ import matplotlib.pyplot as plt
 def train(model, device, train_loader, optimizer, epoch):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
-        data, target, si = data_batched
-
+        data, target = data_batched
+        print(data.shape)
+        sns.heatmap(data[0])
+        plt.show()
+        """
         data = data.float()
         target = target.float()
         data.requires_grad = True
@@ -29,11 +32,7 @@ def train(model, device, train_loader, optimizer, epoch):
 
         optimizer.zero_grad()
         _, output = model(data)
-        # print(output.requires_grad)
 
-        # print(mask.shape)
-        # output = output*mask
-        # target = target*mask
         loss = torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
         loss.backward()
         optimizer.step()
@@ -43,7 +42,7 @@ def train(model, device, train_loader, optimizer, epoch):
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
-
+        """
 
 def test(model, device, test_loader):
     model.eval()

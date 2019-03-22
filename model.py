@@ -33,5 +33,4 @@ class RecurrentNet(nn.Module):
             output_list[t] = output
         hidden_list = hidden_list.permute(1, 0, 2)
         output_list = output_list.permute(1, 0, 2)
-        # print(output_list.shape)
         return hidden_list, output_list
