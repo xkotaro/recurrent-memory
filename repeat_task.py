@@ -14,7 +14,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def train(model, device, train_loader, optimizer, epoch):
+def train(model, device, train_loader, optimizer, epoch, resp_dur, n_stim):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
         data, target = data_batched
@@ -30,12 +30,12 @@ def train(model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         _, output = model(data)
 
-        loss = torch.nn.MSELoss()(output[:, -15:, :], target[:, -15:, :])
+        loss = torch.nn.MSELoss()(output[:, -resp_dur*n_stim:, :], target[:, -resp_dur*n_stim:, :])
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
-            print(target.cpu().data[0][-15].numpy(), target.cpu().data[0][-10].numpy(), target.cpu()[0][-5].numpy())
-            print(output.cpu().data[0][-15:].numpy())
+            print(target.cpu().data[0][-30].numpy(), target.cpu().data[0][-20].numpy(), target.cpu()[0][-10].numpy())
+            print(output.cpu().data[0][-20:].numpy())
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
@@ -76,20 +76,20 @@ def main():
     transform = transforms.Compose([
         transforms.ToTensor()
     ])
-
-    train_dataset = RepeatSignals(max_iter=25000, n_loc=1, n_in=100, stim_dur=25, delay_dur=100,
-                                  resp_dur=25, kappa=5.0, spon_rate=0.08, each_stim_dur=15)
-    test_dataset = RepeatSignals(max_iter=2500, n_loc=1, n_in=100, stim_dur=25, delay_dur=100,
-                                 resp_dur=25, kappa=5.0, spon_rate=0.08, each_stim_dur=15)
+    resp_dur = args.resp_dur
+    train_dataset = RepeatSignals(max_iter=25000, n_loc=1, n_in=100, stim_dur=15,
+                                  resp_dur=resp_dur, kappa=5.0, spon_rate=0.08, n_stim=args.n_stim)
+    test_dataset = RepeatSignals(max_iter=2500, n_loc=1, n_in=100, stim_dur=25,
+                                 resp_dur=25, kappa=5.0, spon_rate=0.08, n_stim=5)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
     test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)
 
-    model = RecurrentNet(n_in=100, n_hid=1000, n_out=1).to(device)
+    model = RecurrentNet(n_in=100, n_hid=500, n_out=1).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
-        train(model, device, train_loader, optimizer, epoch)
+        train(model, device, train_loader, optimizer, epoch, resp_dur, args.n_stim)
         # test(model, device, test_loader)
 
     if args.save_model:
@@ -100,6 +100,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch RNN training')
     parser.add_argument('--batch_size', type=int, default=50, metavar='N',
                         help='input batch size for training (default: 50)')
+    parser.add_argument('--n_stim', type=int, default=3)
+    parser.add_argument('--resp_dur', type=int, default=10)
     parser.add_argument('--test_batch_size', type=int, default=50, metavar='N',
                         help='input batch size for testing (default: 50)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
