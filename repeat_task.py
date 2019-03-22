@@ -30,12 +30,12 @@ def train(model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         _, output = model(data)
 
-        loss = torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
+        loss = torch.nn.MSELoss()(output[:, -15:, :], target[:, -15:, :])
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
-            print(target.data[0][-1])
-            print(output.data[0][-10:])
+            print(target.data[0][-15], target.data[0][-10], target[0][-5])
+            print(output.data[0][-15:])
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
                 loss.item()))
@@ -56,7 +56,7 @@ def test(model, device, test_loader):
             # print(target.requires_grad)
             _, output = model(data)
             # print(output.requires_grad)
-            test_loss += torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
+            test_loss += torch.nn.MSELoss()(output[:, -15:, :], target[:, -15:, :])
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
 
