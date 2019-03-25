@@ -17,13 +17,14 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
     Ls = []
     Rs = []
     for episode in range(n_episodes):
+        episode_stim = []
         for i in range(n_stim):
             S = np.pi * np.random.rand(1)
             S_ = S.copy()
             S = np.repeat(S, n_in, axis=0).T
             S = np.tile(S, (stim_dur, 1))
             Stims.append(S)
-            Stims_.append(S_)
+            episode_stim.append(S_)
 
             # Noisy responses
             L = G * np.exp(kappa * (np.cos(
@@ -32,6 +33,7 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
             Ls.append(L)
             R = np.random.poisson(L)
             Rs.append(R)
+        Stims_.append(episode_stim)
         Lr = (spon_rate / resp_dur) * np.ones((resp_dur * n_stim, nneuron))  # resp
         Rr = np.random.poisson(Lr)
 
@@ -53,7 +55,6 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
     for episode in range(n_episodes):
         target_list.append(np.zeros(stim_dur * n_stim))
         if a[episode] == 2:
-            # print(episode)
             switch_signal = np.random.choice([S1, S2])
             S = np.repeat(switch_signal, n_in, axis=0).T
             S = np.tile(S, (sig1_stim_dur, 1))
@@ -73,13 +74,13 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
         if switch_signal == S1:
             # print("switch=S1")
             for i in range(n_stim):
-                target = np.repeat(Stims_[i], resp_dur, axis=0)
+                target = np.repeat(Stims_[episode][i], resp_dur, axis=0)
                 target_list.append(target)
         else:
             # print("switch=S2")
             # for i in range(n_stim, 0, -1):
             for i in range(n_stim):
-                target = np.repeat(Stims_[i], resp_dur, axis=0)
+                target = np.repeat(Stims_[episode][i], resp_dur, axis=0)
                 target_list.append(target)
 
     signal1 = np.concatenate(tuple(Rs1), axis=0)
