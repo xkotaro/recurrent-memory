@@ -18,8 +18,8 @@ def train(model, device, train_loader, optimizer, epoch, resp_dur, n_stim):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
         data, target = data_batched
-        print(type(data), data.shape)
-        print(type(target), target.shape)
+        # print(type(data), data.shape)
+        # print(type(target), target.shape)
 
         data = data.float()
         target = target.float()
