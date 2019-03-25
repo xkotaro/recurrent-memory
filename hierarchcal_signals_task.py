@@ -67,6 +67,7 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
+        print("epoch: ", (epoch+1))
         train(model, device, optimizer, resp_dur, args.n_stim, args.batch_size, args.network_size)
 
     if args.save_model:

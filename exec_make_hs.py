@@ -20,14 +20,20 @@ targets = np.array(targets)
 signals = torch.from_numpy(signals)
 targets = torch.from_numpy(targets)
 
-batched_signals = signals[:, :75, :]
-batched_targets = targets[:, :75, :]
+batched_signals = signals[:, 75:150, :]
+batched_targets = targets[:, 75:150, :]
 
 print(type(signals), signals.shape)
 print(type(targets), targets.shape)
 
 print(type(batched_signals), batched_signals.shape)
 print(type(batched_targets), batched_targets.shape)
+
+# print(batched_signals[0])
+
+print(batched_targets[0])
+sns.heatmap(batched_signals[0].data)
+plt.show()
 
 
 
