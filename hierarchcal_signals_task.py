@@ -46,17 +46,16 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
             loss += torch.nn.MSELoss()(output[:, 45*(i+2):75*(i+2), :], batched_targets[:, 45*(i+2):75*(i+2), :])
         loss.backward()
         optimizer.step()
-        if ten_episodes % args.log_interval == 0:
-            print("target: ", end=" ")
-            for i in range(n_stim, 0, -1):
-                print(batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
-            print('\n')
-            print("output: ", end=" ")
-            for i in range(n_stim, 0, -1):
-                print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
-            print("\n")
-            print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
-                epoch, ten_episodes, loss.item()))
+        print("target: ", end=" ")
+        for i in range(n_stim, 0, -1):
+            print(batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+        print('\n')
+        print("output: ", end=" ")
+        for i in range(n_stim, 0, -1):
+            print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+        print("\n")
+        print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
+            epoch, ten_episodes, loss.item()))
 
 
 def main():
