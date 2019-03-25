@@ -26,8 +26,6 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
     signals = torch.from_numpy(signals)
     targets = torch.from_numpy(targets)
 
-    hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
-    hidden = hidden.to(device)
     for two_episodes in range(100):
         batched_signals = signals[:, two_episodes*150:(two_episodes+1)*150, :]
         batched_targets = targets[:, two_episodes*150:(two_episodes+1)*150, :]
@@ -38,7 +36,8 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
         batched_signals, batched_targets = batched_signals.to(device), batched_targets.to(device)
 
         optimizer.zero_grad()
-        hidden = hidden.detach()
+        hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
+        hidden = hidden.to(device)
         _, output, hidden = model(batched_signals, hidden)
 
         loss = torch.nn.MSELoss()(output[:, 45:75, :], batched_targets[:, 45:75, :])
