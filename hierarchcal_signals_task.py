@@ -45,9 +45,11 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
         loss.backward()
         optimizer.step()
         if episode % args.log_interval == 0:
+            print("target: ", end=" ")
             for i in range(n_stim, 0, -1):
-                print("target", batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+                print(batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
             print('\n')
+            print("output: ", end=" ")
             for i in range(n_stim, 0, -1):
                 print("output", output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
             print("\n")
