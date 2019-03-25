@@ -83,7 +83,8 @@ def main():
         transforms.ToTensor()
     ])
     resp_dur = args.resp_dur
-    train_dataset = RepeatSignals(max_iter=25000, n_loc=1, n_in=100, stim_dur=15,
+    stim_dur=args.stim_dur
+    train_dataset = RepeatSignals(max_iter=25000, n_loc=1, n_in=100, stim_dur=stim_dur,
                                   resp_dur=resp_dur, kappa=5.0, spon_rate=0.08, n_stim=args.n_stim)
     test_dataset = RepeatSignals(max_iter=2500, n_loc=1, n_in=100, stim_dur=25,
                                  resp_dur=25, kappa=5.0, spon_rate=0.08, n_stim=5)
@@ -107,6 +108,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=50, metavar='N',
                         help='input batch size for training (default: 50)')
     parser.add_argument('--n_stim', type=int, default=3)
+    parser.add_argument('--stim_dur', type=int, default=15)
     parser.add_argument('--resp_dur', type=int, default=10)
     parser.add_argument('--t_constant', type=float, default=0.2)
     parser.add_argument('--network_size', type=int, default=500)
