@@ -11,7 +11,7 @@ import make_hierarchical_signals
 from model import RecurrentNetContinual
 
 
-def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
+def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
     model.train()
     signals = []
     targets = []
@@ -53,6 +53,8 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
             for i in range(n_stim, 0, -1):
                 print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
             print("\n")
+            print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
+                epoch, episode, loss.item()))
 
 
 def main():
@@ -67,8 +69,7 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
-        print("epoch: ", (epoch+1))
-        train(model, device, optimizer, resp_dur, args.n_stim, args.batch_size, args.network_size)
+        train(model, device, optimizer, resp_dur, args.n_stim, epoch, args.batch_size, args.network_size)
 
     if args.save_model:
         torch.save(model.state_dict(), "recurrent_memory.pt")
