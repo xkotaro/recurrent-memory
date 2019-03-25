@@ -51,7 +51,7 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
             print('\n')
             print("output: ", end=" ")
             for i in range(n_stim, 0, -1):
-                print("output", output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+                print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
             print("\n")
 
 
