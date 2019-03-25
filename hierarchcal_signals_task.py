@@ -38,6 +38,7 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
         batched_signals, batched_targets = batched_signals.to(device), batched_targets.to(device)
 
         optimizer.zero_grad()
+        hidden = hidden.detach()
         _, output, hidden = model(batched_signals, hidden)
 
         loss = torch.nn.MSELoss()(output[:, -resp_dur * n_stim:, :], batched_targets[:, -resp_dur * n_stim:, :])
