@@ -27,6 +27,7 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
     targets = torch.from_numpy(targets)
 
     hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
+    hidden = hidden.to(device)
     for episode in range(100):
         batched_signals = signals[:, episode*75:(episode+1)*75, :]
         batched_targets = targets[:, episode*75:(episode+1)*75, :]
