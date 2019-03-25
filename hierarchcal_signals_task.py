@@ -45,7 +45,7 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
         optimizer.step()
         if episode % args.log_interval == 0:
             for i in range(n_stim, 0, -1):
-                print(target.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+                print(batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
             print('\n')
             for i in range(n_stim, 0, -1):
                 print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
