@@ -1,18 +1,13 @@
 from __future__ import print_function
+
 import argparse
+
 import torch
-import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data
-from torchvision import datasets, transforms
-from torch.autograd import Variable
 
-from datagenerator import DelayedEstimationTask, RepeatSignals
-from model import RecurrentNet, RecurrentNetContinual
 import make_hierarchical_signals
-
-import seaborn as sns
-import matplotlib.pyplot as plt
+from model import RecurrentNetContinual
 
 
 def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
