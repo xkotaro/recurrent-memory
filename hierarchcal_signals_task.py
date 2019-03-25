@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import argparse
 
+import numpy as np
 import torch
 import torch.optim as optim
 import torch.utils.data
@@ -18,6 +19,12 @@ def train(model, device, optimizer, resp_dur, n_stim, batch_size, n_hid):
         signal, target = make_hierarchical_signals.hierarchical_signals(n_episodes=100, spon_rate=0.01)
         signals.append(signal)
         targets.append(target)
+
+    signals = np.array(signals)
+    targets = np.array(targets)
+
+    signals = torch.from_numpy(signals)
+    targets = torch.from_numpy(targets)
 
     hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
     for episode in range(100):
