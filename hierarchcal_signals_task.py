@@ -16,7 +16,7 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
     signals = []
     targets = []
     for i in range(batch_size):
-        signal, target = make_hierarchical_signals.hierarchical_signals(n_episodes=100, spon_rate=0.01)
+        signal, target = make_hierarchical_signals.hierarchical_signals(n_episodes=500, spon_rate=0.01)
         signals.append(signal)
         targets.append(target)
 
@@ -28,9 +28,9 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
 
     hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
     hidden = hidden.to(device)
-    for episode in range(100):
-        batched_signals = signals[:, episode*75:(episode+1)*75, :]
-        batched_targets = targets[:, episode*75:(episode+1)*75, :]
+    for ten_episodes in range(50):
+        batched_signals = signals[:, ten_episodes*750:(ten_episodes+1)*750, :]
+        batched_targets = targets[:, ten_episodes*750:(ten_episodes+1)*750, :]
 
         batched_signals = batched_signals.float()
         batched_targets = batched_targets.float()
@@ -41,10 +41,12 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
         hidden = hidden.detach()
         _, output, hidden = model(batched_signals, hidden)
 
-        loss = torch.nn.MSELoss()(output[:, -resp_dur * n_stim:, :], batched_targets[:, -resp_dur * n_stim:, :])
+        loss = torch.nn.MSELoss()(output[:, 45:75, :], batched_targets[:, 45:75, :])
+        for i in range(9):
+            loss += torch.nn.MSELoss()(output[:, 45*(i+2):75*(i+2), :], batched_targets[:, 45*(i+2):75*(i+2), :])
         loss.backward()
         optimizer.step()
-        if episode % args.log_interval == 0:
+        if ten_episodes % args.log_interval == 0:
             print("target: ", end=" ")
             for i in range(n_stim, 0, -1):
                 print(batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
@@ -54,7 +56,7 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
                 print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
             print("\n")
             print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
-                epoch, episode, loss.item()))
+                epoch, ten_episodes, loss.item()))
 
 
 def main():

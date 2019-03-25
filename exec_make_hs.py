@@ -20,8 +20,8 @@ targets = np.array(targets)
 signals = torch.from_numpy(signals)
 targets = torch.from_numpy(targets)
 
-batched_signals = signals[:, 75:150, :]
-batched_targets = targets[:, 75:150, :]
+batched_signals = signals[:, :1500, :]
+batched_targets = targets[:, :1500, :]
 
 print(type(signals), signals.shape)
 print(type(targets), targets.shape)
