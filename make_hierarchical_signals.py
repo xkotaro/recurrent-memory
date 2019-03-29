@@ -54,7 +54,7 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
 
     for episode in range(n_episodes):
         target_list.append(np.zeros(stim_dur * n_stim))
-        if a[episode] == 2 or episode % 10 == 0:
+        if a[episode] == 2 or episode % 1 == 0:
             switch_signal = np.random.choice([S1, S2])
             S = np.repeat(switch_signal, n_in, axis=0).T
             S = np.tile(S, (sig1_stim_dur, 1))
