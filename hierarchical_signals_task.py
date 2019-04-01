@@ -83,7 +83,7 @@ def main():
     model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
                                   t_constant=args.t_constant, use_cuda=use_cuda).to(device)
     model.in_layer.requires_grad = False
-    optimizer = optim.Adam([model.hid_layer.parameters(), model.out_layer.parameters()], lr=args.lr)
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
         train(model=model, device=device, optimizer=optimizer, stim_dur=args.stim_dur, each_episodes=args.each_episodes,
