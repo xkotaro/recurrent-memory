@@ -80,7 +80,7 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
             # print("switch=S2")
 
             for i in range(n_stim, 0, -1):
-                target = np.repeat(Stims_[episode][i-1]*2, resp_dur, axis=0)
+                target = np.repeat(Stims_[episode][i-1]*(-1), resp_dur, axis=0)
                 target_list.append(target)
             """
             for i in range(n_stim):

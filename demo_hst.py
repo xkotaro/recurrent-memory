@@ -9,6 +9,9 @@ import torch.utils.data
 import make_hierarchical_signals
 from model import RecurrentNetContinual
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 def main():
     use_cuda = not args.no_cuda and torch.cuda.is_available()
@@ -48,8 +51,14 @@ def main():
 
     _, output, hidden = model(signals, hidden)
 
-    print(signals.shape)
-    print(output.shape)
+    # print(signals.shape)
+    sns.heatmap(signals[0])
+    plt.show()
+    # print(output.shape)
+    # print(output[0].data.numpy().T[0])
+    plt.plot(targets[0].data.numpy().T[0])
+    plt.plot(output[0].data.numpy().T[0])
+    plt.show()
 
 
 if __name__ == '__main__':
