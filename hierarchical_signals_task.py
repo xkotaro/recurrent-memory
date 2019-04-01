@@ -1,12 +1,15 @@
 from __future__ import print_function
 
 import argparse
+import os
 
 import numpy as np
 import torch
 import torch.optim as optim
+from datetime import datetime
 import torch.utils.data
 
+import pytz
 import make_hierarchical_signals
 from model import RecurrentNetContinual
 
@@ -75,6 +78,8 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
+    os.makedirs("./work", exist_ok=True)
+
     model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1, t_constant=args.t_constant).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
@@ -83,8 +88,9 @@ def main():
               resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=epoch, batch_size=args.batch_size,
               n_hid=args.network_size)
 
-    if args.save_model:
-        torch.save(model.state_dict(), "recurrent_memory.pt")
+        if args.save_model and epoch % 10 == 0:
+            time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
+            torch.save(model.state_dict(), "./work/{}_recurrent_memory_epoch_{}.pth".format(time_stamp, epoch))
 
 
 if __name__ == '__main__':
