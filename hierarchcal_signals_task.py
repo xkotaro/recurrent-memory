@@ -11,7 +11,7 @@ import make_hierarchical_signals
 from model import RecurrentNetContinual
 
 
-def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
+def train(model, device, optimizer, stim_dur, n_episode, resp_dur, n_stim, epoch, batch_size, n_hid):
     model.train()
     signals = []
     targets = []
@@ -28,9 +28,14 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
 
     hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
     hidden = hidden.to(device)
-    for ten_episodes in range(50):
-        batched_signals = signals[:, ten_episodes*750:(ten_episodes+1)*750, :]
-        batched_targets = targets[:, ten_episodes*750:(ten_episodes+1)*750, :]
+    one_learning_length = n_stim * (resp_dur + stim_dur)
+    for episodes in range(batch_size):
+        batched_signals = signals[:,
+                          episodes * one_learning_length * n_episode:(episodes + 1) * one_learning_length * n_episode,
+                          :]
+        batched_targets = targets[:,
+                          episodes * one_learning_length * n_episode:(episodes + 1) * one_learning_length * n_episode,
+                          :]
 
         batched_signals = batched_signals.float()
         batched_targets = batched_targets.float()
@@ -41,9 +46,13 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
         hidden = hidden.detach()
         _, output, hidden = model(batched_signals, hidden)
 
-        loss = torch.nn.MSELoss()(output[:, 45:75, :], batched_targets[:, 45:75, :])
-        for i in range(9):
-            loss += torch.nn.MSELoss()(output[:, 45*(i+2):75*(i+2), :], batched_targets[:, 45*(i+2):75*(i+2), :])
+        loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:n_stim * (stim_dur + resp_dur), :],
+                                  batched_targets[:, n_stim * stim_dur:n_stim * (stim_dur + resp_dur), :])
+        for i in range(n_episode - 1):
+            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * n_stim * (stim_dur + resp_dur):
+                                                 n_stim * (stim_dur + resp_dur) * (i + 2), :],
+                                       batched_targets[:, n_stim * stim_dur + (i + 1) * n_stim * (stim_dur + resp_dur):
+                                                          n_stim * (stim_dur + resp_dur) * (i + 2), :])
         loss.backward()
         optimizer.step()
         print("target: ", end=" ")
@@ -55,7 +64,7 @@ def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):
             print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
         print("\n")
         print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
-            epoch, ten_episodes, loss.item()))
+            epoch, episodes, loss.item()))
 
 
 def main():
