@@ -48,13 +48,13 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
         hidden = hidden.detach()
         _, output, hidden = model(batched_signals, hidden)
 
-        loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:n_stim * (stim_dur + resp_dur), :],
-                                  batched_targets[:, n_stim * stim_dur:n_stim * (stim_dur + resp_dur), :])
+        loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
+                                  batched_targets[:, n_stim * stim_dur:one_learning_length, :])
         for i in range(each_episodes - 1):
-            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * n_stim * (stim_dur + resp_dur):
-                                                 n_stim * (stim_dur + resp_dur) * (i + 2), :],
-                                       batched_targets[:, n_stim * stim_dur + (i + 1) * n_stim * (stim_dur + resp_dur):
-                                                          n_stim * (stim_dur + resp_dur) * (i + 2), :])
+            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * one_learning_length:
+                                                 one_learning_length * (i + 2), :],
+                                       batched_targets[:, n_stim * stim_dur + (i + 1) * one_learning_length:
+                                                          one_learning_length * (i + 2), :])
         loss.backward()
         optimizer.step()
         print("target: ", end=" ")
@@ -75,13 +75,12 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-    resp_dur = args.resp_dur
 
     model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1, t_constant=args.t_constant).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
-        train(model=model, device=device, optimizer=optimizer, stim_dur=args.stim_dur, each_episodes=10,
+        train(model=model, device=device, optimizer=optimizer, stim_dur=args.stim_dur, each_episodes=args.each_episodes,
               resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=args.epochs, batch_size=args.batch_size,
               n_hid=args.network_size)
 
@@ -94,6 +93,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=50, metavar='N',
                         help='input batch size for training (default: 50)')
     parser.add_argument('--n_stim', type=int, default=3)
+    parser.add_argument('--each_episodes', type=int, default=5)
     parser.add_argument('--stim_dur', type=int, default=15)
     parser.add_argument('--resp_dur', type=int, default=10)
     parser.add_argument('--t_constant', type=float, default=0.2)
