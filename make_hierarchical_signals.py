@@ -2,7 +2,7 @@ import numpy as np
 
 
 def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
-                         sig1_stim_dur=20, resp_dur=10, kappa=5.0, spon_rate=0.08, n_stim=3):
+                         sig1_stim_dur=20, resp_dur=10, each_episodes=10, kappa=5.0, spon_rate=0.08, n_stim=3):
     phi = np.linspace(0, np.pi, n_in)
     n_loc = 1
     nneuron = n_in * n_loc
@@ -54,7 +54,7 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
 
     for episode in range(n_episodes):
         target_list.append(np.zeros(stim_dur * n_stim))
-        if a[episode] == 2 or episode % 1 == 0:
+        if a[episode] == 2 or episode % each_episodes == 0:
             switch_signal = np.random.choice([S1, S2])
             S = np.repeat(switch_signal, n_in, axis=0).T
             S = np.tile(S, (sig1_stim_dur, 1))
