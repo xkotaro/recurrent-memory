@@ -80,7 +80,8 @@ def main():
 
     os.makedirs("./work", exist_ok=True)
 
-    model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1, t_constant=args.t_constant).to(device)
+    model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
+                                  t_constant=args.t_constant, use_cuda=use_cuda).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
