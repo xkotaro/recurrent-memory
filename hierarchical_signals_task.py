@@ -34,10 +34,10 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
     for episodes in range(batch_size):
         batched_signals = \
             signals[:, episodes * one_learning_length * each_episodes:
-                       (episodes + 1) * one_learning_length * each_episodes,:]
+                       (episodes + 1) * one_learning_length * each_episodes, :]
         batched_targets = \
             targets[:, episodes * one_learning_length * each_episodes:
-                       (episodes + 1) * one_learning_length * each_episodes,:]
+                       (episodes + 1) * one_learning_length * each_episodes, :]
 
         batched_signals = batched_signals.float()
         batched_targets = batched_targets.float()
@@ -75,13 +75,12 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-
     model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1, t_constant=args.t_constant).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
         train(model=model, device=device, optimizer=optimizer, stim_dur=args.stim_dur, each_episodes=args.each_episodes,
-              resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=args.epochs, batch_size=args.batch_size,
+              resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=epoch, batch_size=args.batch_size,
               n_hid=args.network_size)
 
     if args.save_model:
