@@ -82,6 +82,7 @@ def main():
 
     model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
                                   t_constant=args.t_constant, use_cuda=use_cuda).to(device)
+    model.in_layer.requires_grad = False
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
@@ -91,7 +92,7 @@ def main():
 
         if args.save_model and epoch % 10 == 0:
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
-            torch.save(model.state_dict(), "./work/{}_recurrent_memory_pos_neg_epoch_{}.pth".format(time_stamp, epoch))
+            torch.save(model.state_dict(), "./work/{}_recurrent_memory_fix_inmatrix_pos_neg_epoch_{}.pth".format(time_stamp, epoch))
 
 
 if __name__ == '__main__':

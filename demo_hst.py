@@ -52,13 +52,15 @@ def main():
     _, output, hidden = model(signals, hidden)
 
     # print(signals.shape)
-    sns.heatmap(signals[0])
-    plt.show()
+    # sns.heatmap(signals[0], cmap='gray')
+    # plt.savefig('input_example.png')
     # print(output.shape)
     # print(output[0].data.numpy().T[0])
-    plt.plot(targets[0].data.numpy().T[0])
-    plt.plot(output[0].data.numpy().T[0])
-    plt.show()
+    plt.figure()
+    plt.plot(targets[0].data.numpy().T[0], label='target')
+    plt.plot(output[0].data.numpy().T[0], label='output')
+    plt.legend()
+    plt.savefig('result_epoch_{}_short.png'.format(args.model_epoch))
 
 
 if __name__ == '__main__':
@@ -74,6 +76,7 @@ if __name__ == '__main__':
                         help='disables CUDA training')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
+    parser.add_argument('--model_epoch', type=str)
     args = parser.parse_args()
     print(args)
     main()
