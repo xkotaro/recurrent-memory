@@ -91,10 +91,10 @@ def main():
               resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=epoch, batch_size=args.batch_size,
               n_hid=args.network_size)
 
-        if args.save_model and epoch % 10 == 0:
+        if args.save_model and (epoch-1) % 10 == 0:
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(model.state_dict(),
-                       "~/trained_models/{}_lsmsignals_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
+                       "/root/trained_models/{}_lsmsignals_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
                        .format(time_stamp, args.network_size, args.stim_dur, args.n_stim, args.resp_dur, epoch))
 
 
