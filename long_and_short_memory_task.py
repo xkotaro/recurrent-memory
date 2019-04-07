@@ -11,7 +11,7 @@ import torch.utils.data
 
 import pytz
 import make_lsm_signals
-from model import RecurrentNetContinual
+from model import RecurrentNetContinual, RecurrentNetTimeVariable
 
 
 def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, epoch, batch_size, n_hid):
@@ -80,8 +80,10 @@ def main():
 
     os.makedirs("./work", exist_ok=True)
 
-    model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
-                                  t_constant=args.t_constant, use_cuda=use_cuda).to(device)
+    # model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
+    #                               t_constant=args.t_constant, use_cuda=use_cuda).to(device)
+    model = RecurrentNetTimeVariable(n_in=200, n_hid=args.network_size, n_out=1,
+                                     use_cuda=use_cuda).to(device)
     # model.in_layer.requires_grad = False
     # model.out_layer.requires_grad = False
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
@@ -91,7 +93,7 @@ def main():
               resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=epoch, batch_size=args.batch_size,
               n_hid=args.network_size)
 
-        if args.save_model and (epoch-1) % 10 == 0:
+        if args.save_model and (epoch - 1) % 10 == 0:
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(model.state_dict(),
                        "/root/trained_models/{}_lsmsignals_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
