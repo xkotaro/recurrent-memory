@@ -93,7 +93,7 @@ def main():
 
         if args.save_model and epoch % 10 == 0:
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
-            torch.save(model.state_dict(), "./work/{}_recurrent_memory_fix_inmatrix_pos_neg_epoch_{}.pth".format(time_stamp, epoch))
+            torch.save(model.state_dict(), "./work/{}_long_short_memory_epoch_{}.pth".format(time_stamp, epoch))
 
 
 if __name__ == '__main__':
