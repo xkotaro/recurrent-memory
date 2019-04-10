@@ -2,16 +2,16 @@ from __future__ import print_function
 
 import argparse
 import os
+from datetime import datetime
 
 import numpy as np
+import pytz
 import torch
 import torch.optim as optim
-from datetime import datetime
 import torch.utils.data
 
-import pytz
 import make_lsm_signals
-from model import RecurrentNetContinual, RecurrentNetTimeFixed
+from model import RecurrentNetTimeFixed
 
 
 def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, epoch, batch_size, n_hid):
@@ -80,11 +80,9 @@ def main():
 
     os.makedirs("./work", exist_ok=True)
 
-    # model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
-    #                               t_constant=args.t_constant, use_cuda=use_cuda).to(device)
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda).to(device)
-    alpha_weight = np.array([0.2]*10+[0.5]*490)
+    alpha_weight = np.array([[0.2]] * 10 + [[0.5]] * 490)
     model.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight))
     model.alpha.requires_grad = False
     model.in_layer.requires_grad = False
@@ -101,7 +99,7 @@ def main():
             torch.save(
                 model.state_dict(),
                 "/root/trained_models/{}_lsmsignals_fxtime_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
-                .format(time_stamp, args.network_size, args.stim_dur, args.n_stim, args.resp_dur, epoch))
+                    .format(time_stamp, args.network_size, args.stim_dur, args.n_stim, args.resp_dur, epoch))
 
 
 if __name__ == '__main__':
