@@ -85,7 +85,7 @@ def main():
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda).to(device)
     alpha_weight = np.array([0.2]*10+[0.5]*490)
-    model.alpha.weight = torch.from_numpy(alpha_weight)
+    model.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight))
     model.alpha.requires_grad = False
     model.in_layer.requires_grad = False
     model.out_layer.requires_grad = False
