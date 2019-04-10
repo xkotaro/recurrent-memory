@@ -84,8 +84,8 @@ def main():
     #                               t_constant=args.t_constant, use_cuda=use_cuda).to(device)
     model = RecurrentNetTimeVariable(n_in=200, n_hid=args.network_size, n_out=1,
                                      use_cuda=use_cuda).to(device)
-    # model.in_layer.requires_grad = False
-    # model.out_layer.requires_grad = False
+    model.in_layer.requires_grad = False
+    model.out_layer.requires_grad = False
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
@@ -93,7 +93,7 @@ def main():
               resp_dur=args.resp_dur, n_stim=args.n_stim, epoch=epoch, batch_size=args.batch_size,
               n_hid=args.network_size)
 
-        if args.save_model and (epoch - 1) % 10 == 0:
+        if args.save_model and (epoch - 1) % args.savepoint == 0:
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(model.state_dict(),
                        "/root/trained_models/{}_lsmsignals_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
@@ -112,6 +112,7 @@ if __name__ == '__main__':
     parser.add_argument('--network_size', type=int, default=500)
     parser.add_argument('--test_batch_size', type=int, default=50, metavar='N',
                         help='input batch size for testing (default: 50)')
+    parser.add_argument('--savepoint', type=int, default=10)
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
                         help='number of epochs to train (default: 10)')
     parser.add_argument('--lr', type=float, default=0.0005, metavar='LR',
