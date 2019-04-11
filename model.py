@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 
 class RecurrentNet(nn.Module):
@@ -113,6 +114,8 @@ class RecurrentNetTimeFixed(nn.Module):
         self.out_layer = nn.Linear(n_hid, n_out)
         self.use_cuda = use_cuda
         self.alpha = nn.Linear(1, n_hid, bias=False)
+        alpha_weight = np.array([[0.2]] * 10 + [[0.5]] * 490)
+        self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cuda'))
 
     def forward(self, input_signal, hidden):
         num_batch = input_signal.size(0)

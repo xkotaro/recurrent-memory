@@ -82,11 +82,10 @@ def main():
 
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda).to(device)
-    alpha_weight = np.array([[0.2]] * 10 + [[0.5]] * 490)
-    model.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to(device))
     model.alpha.requires_grad = False
     model.in_layer.requires_grad = False
     model.out_layer.requires_grad = False
+    print(model)
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
@@ -99,7 +98,7 @@ def main():
             torch.save(
                 model.state_dict(),
                 "/root/trained_models/{}_lsmsignals_fxtime_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
-                    .format(time_stamp, args.network_size, args.stim_dur, args.n_stim, args.resp_dur, epoch))
+                .format(time_stamp, args.network_size, args.stim_dur, args.n_stim, args.resp_dur, epoch))
 
 
 if __name__ == '__main__':
