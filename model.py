@@ -83,11 +83,15 @@ class RecurrentNetTimeVariable(nn.Module):
     def forward(self, input_signal, hidden):
         num_batch = input_signal.size(0)
         length = input_signal.size(1)
-        # hidden = torch.zeros(num_batch, self.n_hid, requires_grad=True).type_as(input_signal.data)
         hidden_list = torch.zeros(length, num_batch, self.n_hid, requires_grad=True).type_as(input_signal.data)
         output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
         input_signal = input_signal.permute(1, 0, 2)
-        # print(input_signal.shape)
+
+        for param in self.in_layer.parameters():
+            param.requires_grad = False
+
+        for param in self.out_layer.parameters():
+            param.requires_grad = False
         const_one = torch.Tensor([1])
         if self.use_cuda:
             const_one = const_one.to('cuda')
@@ -123,8 +127,8 @@ class RecurrentNetTimeFixed(nn.Module):
         for param in self.out_layer.parameters():
             param.requires_grad = False
 
-        for param in self.alpha.parameters():
-            param.requires_grad = False
+        # for param in self.alpha.parameters():
+        #     param.requires_grad = False
 
     def forward(self, input_signal, hidden):
         num_batch = input_signal.size(0)
