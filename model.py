@@ -117,6 +117,15 @@ class RecurrentNetTimeFixed(nn.Module):
         alpha_weight = np.array([[0.2]] * 10 + [[0.5]] * 490)
         self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cuda'))
 
+        for param in self.in_layer.parameters():
+            param.requires_grad = False
+
+        for param in self.out_layer.parameters():
+            param.requires_grad = False
+
+        for param in self.alpha.parameters():
+            param.requires_grad = False
+
     def forward(self, input_signal, hidden):
         num_batch = input_signal.size(0)
         length = input_signal.size(1)
