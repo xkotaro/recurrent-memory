@@ -86,6 +86,8 @@ def main():
     model.in_layer.requires_grad = False
     model.out_layer.requires_grad = False
     print(model)
+    for param in model.parameters():
+        print(param.requires_grad)
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
