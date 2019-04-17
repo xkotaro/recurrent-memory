@@ -55,11 +55,11 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
         loss.backward()
         optimizer.step()
         print("target: ", end=" ")
-        for i in range(n_stim, 0, -1):
+        for i in range(n_stim):
             print(batched_targets.cpu().data[0][int(resp_dur * i)].numpy()[0], end=" ")
         print('\n')
         print("output: ", end=" ")
-        for i in range(n_stim, 0, -1):
+        for i in range(n_stim):
             print(output.cpu().data[0][int(resp_dur * i)].numpy()[0], end=" ")
         print("\n")
         print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
