@@ -25,7 +25,7 @@ class RecurrentNet(nn.Module):
         alpha = alpha.to('cuda')
         for t in range(length):
             x = self.in_layer(input_signal[t])
-            hidden = (1-alpha) * hidden + alpha * self.hid_layer(x, hidden)
+            hidden = (1 - alpha) * hidden + alpha * self.hid_layer(x, hidden)
             output = self.out_layer(hidden)
             hidden_list[t] = hidden
             output_list[t] = output
@@ -57,7 +57,7 @@ class RecurrentNetContinual(nn.Module):
 
         for t in range(length):
             x = self.in_layer(input_signal[t])
-            hidden = (1-alpha) * hidden + alpha * self.hid_layer(x, hidden)
+            hidden = (1 - alpha) * hidden + alpha * self.hid_layer(x, hidden)
             output = self.out_layer(hidden)
             hidden_list[t] = hidden
             output_list[t] = output
@@ -96,7 +96,7 @@ class RecurrentNetTimeVariableOld(nn.Module):
 
         for t in range(length):
             x = self.in_layer(input_signal[t])
-            hidden = (1-alpha) * hidden + alpha * self.hid_layer(x, hidden)
+            hidden = (1 - alpha) * hidden + alpha * self.hid_layer(x, hidden)
             output = self.out_layer(hidden)
             hidden_list[t] = hidden
             output_list[t] = output
@@ -152,7 +152,7 @@ class RecurrentNetTimeVariable(nn.Module):
 
 
 class RecurrentNetTimeFixed(nn.Module):
-    def __init__(self, n_in, n_out, n_hid, use_cuda, alpha_weight = np.array([0.1] * 50 + [0.4] * 450)):
+    def __init__(self, n_in, n_out, n_hid, use_cuda, alpha_weight=np.array([0.1] * 50 + [0.4] * 450)):
         super(RecurrentNetTimeFixed, self).__init__()
         self.n_hid = n_hid
         self.n_out = n_out
@@ -247,7 +247,7 @@ class RecurrentNetTimeFixed(nn.Module):
 
         for t in range(length):
             x = self.in_layer(input_signal[t])
-            hidden = (1-alpha) * hidden + alpha * self.hid_layer(x, hidden)
+            hidden = (1 - alpha) * hidden + alpha * self.hid_layer(x, hidden)
             output = self.out_layer(hidden)
             hidden_list[t] = hidden
             output_list[t] = output
