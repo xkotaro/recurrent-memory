@@ -18,18 +18,24 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
     model.train()
     signals = []
     targets = []
+    covers = []
     for i in range(batch_size):
         signal, target = input_driven_long_memory.input_driven_long_signals(n_episodes=500, stim_dur=stim_dur,
                                                                             resp_dur=resp_dur,
                                                                             spon_rate=0.01)
+        target_len = target.shape[0]
+        cover = [1 if target[j][0]>0 else 0 for j in range(target_len)]
         signals.append(signal)
         targets.append(target)
+        covers.append(cover)
 
     signals = np.array(signals)
     targets = np.array(targets)
+    covers = np.array(covers)
 
     signals = torch.from_numpy(signals)
     targets = torch.from_numpy(targets)
+    covers = torch.from_numpy(covers)
 
     hidden = torch.zeros(batch_size, n_hid, requires_grad=True)
     hidden = hidden.to(device)
@@ -42,6 +48,10 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
             targets[:, episodes * one_learning_length * each_episodes:
                        (episodes + 1) * one_learning_length * each_episodes, :]
 
+        batched_covers = \
+            covers[:, episodes * one_learning_length * each_episodes:
+                       (episodes + 1) * one_learning_length * each_episodes, :]
+
         batched_signals = batched_signals.float()
         batched_targets = batched_targets.float()
         batched_signals.requires_grad = True
@@ -51,6 +61,7 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
         hidden = hidden.detach()
         _, output, hidden = model(batched_signals, hidden)
 
+        output = output * batched_covers
         loss = torch.nn.MSELoss()(output, batched_targets)
         loss.backward()
         optimizer.step()
@@ -62,6 +73,14 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
         for i in range(n_stim):
             print(output.cpu().data[0][int(resp_dur * i)].numpy()[0], end=" ")
         print("\n")
+
+        for i in range(n_stim, 0, -1):
+            print(batched_targets.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+        print('\n')
+        print("output: ", end=" ")
+        for i in range(n_stim, 0, -1):
+            print(output.cpu().data[0][-int(resp_dur * i)].numpy()[0], end=" ")
+
         print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
             epoch, episodes, loss.item()))
 

@@ -38,10 +38,11 @@ def input_driven_long_signals(n_episodes=100, n_in=100, stim_dur=15,
     target_list = []
 
     for episode in range(n_episodes):
-        if episode >= 3 and 2.0 <= Stims_[episode-3][0] + Stims_[episode-3][1] <= 3.0:
+        how_long_ago = 1
+        if episode >= how_long_ago and 2.0 <= Stims_[episode-how_long_ago][0] + Stims_[episode-how_long_ago][1] <= 3.0:
             # print(episode)
             for i in range(2):
-                target = np.repeat(Stims_[episode-3][i], resp_dur, axis=0)
+                target = np.repeat(Stims_[episode-how_long_ago][i], resp_dur, axis=0)
                 target_list.append(target)
             target_list.append(np.zeros(n_stim*stim_dur-2*resp_dur))
         else:
