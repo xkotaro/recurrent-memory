@@ -39,11 +39,9 @@ def lsm_signals(n_episodes=100, n_in=100, stim_dur=15,
             S = np.tile(S, (stim_dur, 1))
             Stims.append(S)
             episode_stim.append(S_)
-
             # Noisy responses
             L = G * np.exp(kappa * (np.cos(
                 2.0 * (S - np.tile(phi, (stim_dur, n_loc)))) - 1.0))  # stim
-
             Ls.append(L)
             R = np.random.poisson(L)
             Rs.append(R)
@@ -60,7 +58,6 @@ def lsm_signals(n_episodes=100, n_in=100, stim_dur=15,
     G1 = np.tile(G1, (sig1_stim_dur, 1))
 
     # signal1 & target
-    # a = np.random.poisson(0.8, n_episodes)
     Rs1 = []
     accum_signal = np.pi * np.random.rand(1)
     target_list = []
@@ -158,6 +155,7 @@ def main():
 
     Xd = pca.transform(X)
 
+    # 色の設定
     cmap = plt.get_cmap("tab10")
     fig = plt.figure()
     ax = Axes3D(fig)
@@ -166,9 +164,6 @@ def main():
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
     ax.set_zlabel("PC3")
-
-    # print(when_slow_signal)
-    # print(slow_signal_values)
 
     color = 0
     for i in range(len(when_slow_signal) - 1):

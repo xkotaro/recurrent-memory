@@ -10,7 +10,7 @@ from datetime import datetime
 import torch.utils.data
 
 import pytz
-import make_hierarchical_signals
+from dataset import make_hierarchical_signals
 from model import RecurrentNetContinual
 
 
@@ -78,7 +78,7 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-    os.makedirs("./work", exist_ok=True)
+    os.makedirs("./trained_models", exist_ok=True)
 
     model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
                                   t_constant=args.t_constant, use_cuda=use_cuda).to(device)
@@ -93,7 +93,7 @@ def main():
 
         if args.save_model and epoch % 10 == 0:
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
-            torch.save(model.state_dict(), "./work/{}_long_short_memory_epoch_{}.pth".format(time_stamp, epoch))
+            torch.save(model.state_dict(), "./trained_models/{}_long_short_memory_epoch_{}.pth".format(time_stamp, epoch))
 
 
 if __name__ == '__main__':

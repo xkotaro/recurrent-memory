@@ -10,7 +10,7 @@ import torch
 import torch.optim as optim
 import torch.utils.data
 
-import make_lsm_signals
+from dataset import make_lsm_signals
 from model import RecurrentNetTimeFixed
 
 
@@ -78,15 +78,10 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-    os.makedirs("./work", exist_ok=True)
+    os.makedirs("~/models", exist_ok=True)
 
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda).to(device)
-    """
-    model.alpha.requires_grad = False
-    model.in_layer.requires_grad = False
-    model.out_layer.requires_grad = False
-    """
     print(model)
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 

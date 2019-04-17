@@ -7,7 +7,7 @@ import torch
 import torch.optim as optim
 import torch.utils.data
 
-import make_hierarchical_signals
+from dataset import make_hierarchical_signals
 from model import RecurrentNetContinual
 
 

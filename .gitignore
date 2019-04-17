@@ -1,3 +1,9 @@
 *.png
 *.log
 __pycache__/
+*.ipynb
+.ipynb_checkpoints/
+result/
+.idea/
+trained_models/
+.DS_Store

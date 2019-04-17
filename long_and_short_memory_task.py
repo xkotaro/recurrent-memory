@@ -2,16 +2,16 @@ from __future__ import print_function
 
 import argparse
 import os
+from datetime import datetime
 
 import numpy as np
+import pytz
 import torch
 import torch.optim as optim
-from datetime import datetime
 import torch.utils.data
 
-import pytz
-import make_lsm_signals
-from model import RecurrentNetContinual, RecurrentNetTimeVariable
+from dataset import make_lsm_signals
+from model import RecurrentNetTimeVariable
 
 
 def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, epoch, batch_size, n_hid):
@@ -78,14 +78,10 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-    os.makedirs("./work", exist_ok=True)
+    os.makedirs("~/models", exist_ok=True)
 
-    # model = RecurrentNetContinual(n_in=200, n_hid=args.network_size, n_out=1,
-    #                               t_constant=args.t_constant, use_cuda=use_cuda).to(device)
     model = RecurrentNetTimeVariable(n_in=200, n_hid=args.network_size, n_out=1,
                                      use_cuda=use_cuda).to(device)
-    # model.in_layer.requires_grad = False
-    # model.out_layer.requires_grad = False
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):

@@ -2,7 +2,7 @@ import numpy as np
 
 import torch
 
-import make_hierarchical_signals
+from dataset import make_hierarchical_signals
 import matplotlib.pyplot as plt
 import seaborn as sns
 

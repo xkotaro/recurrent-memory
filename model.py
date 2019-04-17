@@ -21,7 +21,6 @@ class RecurrentNet(nn.Module):
         hidden_list = torch.zeros(length, num_batch, self.n_hid, requires_grad=True).type_as(input_signal.data)
         output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
         input_signal = input_signal.permute(1, 0, 2)
-        # print(input_signal.shape)
         alpha = torch.Tensor([self.t_constant])
         alpha = alpha.to('cuda')
         for t in range(length):
@@ -49,11 +48,9 @@ class RecurrentNetContinual(nn.Module):
     def forward(self, input_signal, hidden):
         num_batch = input_signal.size(0)
         length = input_signal.size(1)
-        # hidden = torch.zeros(num_batch, self.n_hid, requires_grad=True).type_as(input_signal.data)
         hidden_list = torch.zeros(length, num_batch, self.n_hid, requires_grad=True).type_as(input_signal.data)
         output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
         input_signal = input_signal.permute(1, 0, 2)
-        # print(input_signal.shape)
         alpha = torch.Tensor([self.t_constant])
         if self.use_cuda:
             alpha = alpha.to('cuda')
@@ -155,7 +152,7 @@ class RecurrentNetTimeVariable(nn.Module):
 
 
 class RecurrentNetTimeFixed(nn.Module):
-    def __init__(self, n_in, n_out, n_hid, use_cuda):
+    def __init__(self, n_in, n_out, n_hid, use_cuda, alpha_weight = np.array([0.1] * 50 + [0.4] * 450)):
         super(RecurrentNetTimeFixed, self).__init__()
         self.n_hid = n_hid
         self.n_out = n_out
@@ -164,8 +161,7 @@ class RecurrentNetTimeFixed(nn.Module):
         self.out_layer = nn.Linear(n_hid, n_out)
         self.use_cuda = use_cuda
         self.alpha = nn.Linear(1, n_hid, bias=False)
-        # alpha_weight = np.array([[0.1]] * 50 + [[0.4]] * 450)
-
+        """
         alpha_weight = np.array([0.5027, 0.4870, 0.2169, 0.6417, 0.6296, 0.3323, 0.3657, 0.3103, 0.7358,
         0.4409, 0.6844, 0.4695, 0.5713, 0.5025, 0.4282, 0.3991, 0.6625, 0.5481,
         0.3860, 0.9180, 0.5853, 0.4382, 0.6517, 0.2430, 0.4231, 0.3124, 0.2862,
@@ -222,6 +218,7 @@ class RecurrentNetTimeFixed(nn.Module):
         0.8020, 0.7562, 0.5263, 0.3956, 0.6900, 0.4912, 0.4562, 0.6552, 0.4804,
         0.6823, 0.5021, 0.3416, 0.5377, 0.6399, 0.1425, 0.5595, 0.2267, 0.6512,
         0.1502, 0.5517, 0.4139, 0.6237, 0.2281])
+        """
         alpha_weight = np.expand_dims(alpha_weight, axis=1)
         if use_cuda:
             self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cuda'))

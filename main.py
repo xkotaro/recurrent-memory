@@ -1,17 +1,13 @@
 from __future__ import print_function
 import argparse
 import torch
-import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data
-from torchvision import datasets, transforms
+from torchvision import transforms
 from torch.autograd import Variable
 
-from datagenerator import DelayedEstimationTask
+from dataset.datagenerator import DelayedEstimationTask
 from model import RecurrentNet
-
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 
 def train(model, device, train_loader, optimizer, epoch):
@@ -22,18 +18,11 @@ def train(model, device, train_loader, optimizer, epoch):
         data = data.float()
         target = target.float()
         data.requires_grad = True
-        # print(data.requires_grad)
         data, target = data.to(device), target.to(device)
-        # data = Variable(data)
-        # target = Variable(target)
 
         optimizer.zero_grad()
         _, output = model(data)
-        # print(output.requires_grad)
 
-        # print(mask.shape)
-        # output = output*mask
-        # target = target*mask
         loss = torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
         loss.backward()
         optimizer.step()
@@ -57,9 +46,7 @@ def test(model, device, test_loader):
             data, target = data.to(device), target.to(device)
             data = Variable(data)
             target = Variable(target)
-            # print(target.requires_grad)
             _, output = model(data)
-            # print(output.requires_grad)
             test_loss += torch.nn.MSELoss()(output[:, -25:, :], target[:, -25:, :])
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()

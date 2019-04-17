@@ -6,9 +6,8 @@ import torch
 import torch.optim as optim
 import torch.utils.data
 from torch.autograd import Variable
-from torchvision import transforms
 
-from datagenerator import RepeatSignals
+from dataset.datagenerator import RepeatSignals
 from model import RecurrentNet
 
 
@@ -16,16 +15,11 @@ def train(model, device, train_loader, optimizer, epoch, resp_dur, n_stim):
     model.train()
     for batch_idx, data_batched in enumerate(train_loader):
         data, target = data_batched
-        # print(type(data), data.shape)
-        # print(type(target), target.shape)
 
         data = data.float()
         target = target.float()
         data.requires_grad = True
-        # print(data.requires_grad)
         data, target = data.to(device), target.to(device)
-        # data = Variable(data)
-        # target = Variable(target)
 
         optimizer.zero_grad()
         _, output = model(data)
@@ -57,9 +51,7 @@ def test(model, device, test_loader):
             data, target = data.to(device), target.to(device)
             data = Variable(data)
             target = Variable(target)
-            # print(target.requires_grad)
             _, output = model(data)
-            # print(output.requires_grad)
             test_loss += torch.nn.MSELoss()(output[:, -15:, :], target[:, -15:, :])
             pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
             correct += pred.eq(target.view_as(pred)).sum().item()
@@ -77,25 +69,18 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-    transform = transforms.Compose([
-        transforms.ToTensor()
-    ])
     resp_dur = args.resp_dur
     stim_dur=args.stim_dur
     train_dataset = RepeatSignals(max_iter=25000, n_loc=1, n_in=100, stim_dur=stim_dur,
                                   resp_dur=resp_dur, kappa=5.0, spon_rate=0.08, n_stim=args.n_stim)
-    test_dataset = RepeatSignals(max_iter=2500, n_loc=1, n_in=100, stim_dur=25,
-                                 resp_dur=25, kappa=5.0, spon_rate=0.08, n_stim=5)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, args.batch_size)
-    test_loader = torch.utils.data.DataLoader(test_dataset, args.batch_size)
 
     model = RecurrentNet(n_in=100, n_hid=500, n_out=1, t_constant=args.t_constant).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     for epoch in range(1, args.epochs + 1):
         train(model, device, train_loader, optimizer, epoch, resp_dur, args.n_stim)
-        # test(model, device, test_loader)
 
     if args.save_model:
         torch.save(model.state_dict(), "recurrent_memory.pt")

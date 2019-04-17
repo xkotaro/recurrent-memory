@@ -6,11 +6,10 @@ import numpy as np
 import torch
 import torch.utils.data
 
-import make_hierarchical_signals
+from dataset import make_hierarchical_signals
 from model import RecurrentNetContinual
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def main():
@@ -51,11 +50,6 @@ def main():
 
     _, output, hidden = model(signals, hidden)
 
-    # print(signals.shape)
-    # sns.heatmap(signals[0], cmap='gray')
-    # plt.savefig('input_example.png')
-    # print(output.shape)
-    # print(output[0].data.numpy().T[0])
     plt.figure()
     plt.plot(targets[0].data.numpy().T[0], label='target')
     plt.plot(output[0].data.numpy().T[0], label='output')
