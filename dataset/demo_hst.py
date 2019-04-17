@@ -7,7 +7,7 @@ import torch
 import torch.utils.data
 
 from dataset import make_hierarchical_signals
-from model import RecurrentNetContinual
+from model.model import RecurrentNetContinual
 
 import matplotlib.pyplot as plt
 

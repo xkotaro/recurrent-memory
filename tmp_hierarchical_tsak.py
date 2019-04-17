@@ -8,7 +8,7 @@ import torch.optim as optim
 import torch.utils.data
 
 from dataset import make_hierarchical_signals
-from model import RecurrentNetContinual
+from model.model import RecurrentNetContinual
 
 
 def train(model, device, optimizer, resp_dur, n_stim, epoch, batch_size, n_hid):

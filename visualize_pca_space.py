@@ -9,7 +9,7 @@ import torch.utils.data
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
 import torch.nn.functional as F
-from model import RecurrentNetTimeVariable, RecurrentNetTimeFixed
+from model.model import RecurrentNetTimeVariable, RecurrentNetTimeFixed
 
 when_slow_signal = []
 slow_signal_values = [1.278, 2.176, 0.451]

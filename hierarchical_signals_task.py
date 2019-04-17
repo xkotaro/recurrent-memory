@@ -11,7 +11,7 @@ import torch.utils.data
 
 import pytz
 from dataset import make_hierarchical_signals
-from model import RecurrentNetContinual
+from model.model import RecurrentNetContinual
 
 
 def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, epoch, batch_size, n_hid):

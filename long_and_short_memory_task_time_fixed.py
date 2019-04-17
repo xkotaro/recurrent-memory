@@ -11,7 +11,7 @@ import torch.optim as optim
 import torch.utils.data
 
 from dataset import make_lsm_signals
-from model import RecurrentNetTimeFixed
+from model.model import RecurrentNetTimeFixed
 
 
 def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, epoch, batch_size, n_hid):

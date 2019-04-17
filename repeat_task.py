@@ -8,7 +8,7 @@ import torch.utils.data
 from torch.autograd import Variable
 
 from dataset.datagenerator import RepeatSignals
-from model import RecurrentNet
+from model.model import RecurrentNet
 
 
 def train(model, device, train_loader, optimizer, epoch, resp_dur, n_stim):
