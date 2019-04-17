@@ -79,6 +79,18 @@ class RecurrentNetTimeVariable(nn.Module):
         self.out_layer = nn.Linear(n_hid, n_out)
         self.use_cuda = use_cuda
         self.alpha = nn.Linear(1, n_hid, bias=False)
+        alpha_weight = np.array([[0.3]] * 500)
+
+        if use_cuda:
+            self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cuda'))
+        else:
+            self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cpu'))
+
+        for param in self.in_layer.parameters():
+            param.requires_grad = False
+
+        for param in self.out_layer.parameters():
+            param.requires_grad = False
 
     def forward(self, input_signal, hidden):
         num_batch = input_signal.size(0)
@@ -87,15 +99,10 @@ class RecurrentNetTimeVariable(nn.Module):
         output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
         input_signal = input_signal.permute(1, 0, 2)
 
-        for param in self.in_layer.parameters():
-            param.requires_grad = False
-
-        for param in self.out_layer.parameters():
-            param.requires_grad = False
         const_one = torch.Tensor([1])
         if self.use_cuda:
             const_one = const_one.to('cuda')
-        alpha = F.sigmoid(self.alpha(const_one))
+        alpha = self.alpha(const_one)
 
         for t in range(length):
             x = self.in_layer(input_signal[t])
