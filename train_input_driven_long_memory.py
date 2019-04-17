@@ -24,7 +24,7 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
                                                                             resp_dur=resp_dur,
                                                                             spon_rate=0.01)
         target_len = target.shape[0]
-        cover = [1 if target[j][0]>0 else 0 for j in range(target_len)]
+        cover = [[1] if target[j][0]>0 else [0] for j in range(target_len)]
         signals.append(signal)
         targets.append(target)
         covers.append(cover)
