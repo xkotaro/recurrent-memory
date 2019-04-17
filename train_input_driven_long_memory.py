@@ -57,6 +57,7 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
         batched_covers = batched_covers.float()
         batched_signals.requires_grad = True
         batched_signals, batched_targets = batched_signals.to(device), batched_targets.to(device)
+        batched_covers = batched_covers.to(device)
 
         optimizer.zero_grad()
         hidden = hidden.detach()
