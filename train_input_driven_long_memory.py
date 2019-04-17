@@ -21,7 +21,7 @@ def train(model, device, optimizer, stim_dur, each_episodes, resp_dur, n_stim, e
     covers = []
     for i in range(batch_size):
         signal, target = input_driven_long_memory.input_driven_long_signals(n_episodes=500, stim_dur=stim_dur,
-                                                                            resp_dur=resp_dur,
+                                                                            resp_dur=resp_dur, how_long_ago=2,
                                                                             spon_rate=0.01)
         target_len = target.shape[0]
         cover = [[1] if target[j][0] > 0 else [0] for j in range(target_len)]
@@ -97,8 +97,9 @@ def main():
 
     os.makedirs("~/models", exist_ok=True)
 
+    alpha = [0.08] * 100 + [0.4] * 400
     model = RecurrentNetTimeFixed(n_in=100, n_hid=args.network_size, n_out=1,
-                                  use_cuda=use_cuda).to(device)
+                                  use_cuda=use_cuda, alpha_weight=alpha).to(device)
     print(model)
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
@@ -112,7 +113,7 @@ def main():
             torch.save(
                 model.state_dict(),
                 "/root/models/"
-                "{}_input_driven_slow_signals_fxtime_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
+                "{}_input_driven_slow_008_100_04_400_fxtime_netsize_{}_stimdur_{}_nstim_{}_respdur_{}_epoch_{}.pth"
                 .format(time_stamp, args.network_size, args.stim_dur, args.n_stim, args.resp_dur, epoch))
 
 

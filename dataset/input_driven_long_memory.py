@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def input_driven_long_signals(n_episodes=100, n_in=100, stim_dur=15,
+def input_driven_long_signals(n_episodes=100, n_in=100, stim_dur=15, how_long_ago=3,
                               resp_dur=10, kappa=5.0, spon_rate=0.08, n_stim=3):
     phi = np.linspace(0, np.pi, n_in)
     n_loc = 1
@@ -38,7 +38,6 @@ def input_driven_long_signals(n_episodes=100, n_in=100, stim_dur=15,
     target_list = []
 
     for episode in range(n_episodes):
-        how_long_ago = 3
         if episode >= how_long_ago and 2.0 <= Stims_[episode-how_long_ago][0] + Stims_[episode-how_long_ago][1] <= 3.0:
             for i in range(2):
                 target = np.repeat(Stims_[episode-how_long_ago][i], resp_dur, axis=0)
