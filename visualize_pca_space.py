@@ -143,10 +143,8 @@ def main():
         X = hidden_list.data.numpy()[0]
     else:
         const_one = torch.Tensor([1])
-        if args.time_fixed:
-            alpha = model.alpha(const_one)
-        else:
-            alpha = F.sigmoid(model.alpha(const_one))
+        alpha = model.alpha(const_one)
+
         thresholded_index = [i for i in range(500) if alpha[i] > args.threshold_time_scale]
         only_fast_dynamics = np.array([hidden_list.data.numpy()[0].T[i] for i in thresholded_index])
         X = only_fast_dynamics.T
