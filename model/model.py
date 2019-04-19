@@ -254,3 +254,53 @@ class RecurrentNetTimeFixed(nn.Module):
         hidden_list = hidden_list.permute(1, 0, 2)
         output_list = output_list.permute(1, 0, 2)
         return hidden_list, output_list, hidden
+
+
+class RecurrentNetTimeFixedOnlyRec(nn.Module):
+    def __init__(self, n_in, n_out, n_hid, use_cuda, alpha_weight=np.array([0.1] * 50 + [0.4] * 450)):
+        super(RecurrentNetTimeFixedOnlyRec, self).__init__()
+        self.n_hid = n_hid
+        self.n_out = n_out
+        # self.in_layer = nn.Linear(n_in, n_hid)
+        self.hid_layer = nn.RNNCell(n_in, n_hid, nonlinearity='relu')
+        self.out_layer = nn.Linear(n_hid, n_out)
+        self.use_cuda = use_cuda
+        self.alpha = nn.Linear(1, n_hid, bias=False)
+
+        alpha_weight = np.expand_dims(alpha_weight, axis=1)
+        if use_cuda:
+            self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cuda'))
+        else:
+            self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cpu'))
+
+        tmp = 0
+        for param in self.hid_layer.parameters():
+            if tmp == 0 or tmp == 2:
+                param.requires_grad = False
+            tmp += 1
+
+        for param in self.out_layer.parameters():
+            param.requires_grad = False
+
+        for param in self.alpha.parameters():
+            param.requires_grad = False
+
+    def forward(self, input_signal, hidden):
+        num_batch = input_signal.size(0)
+        length = input_signal.size(1)
+        hidden_list = torch.zeros(length, num_batch, self.n_hid, requires_grad=True).type_as(input_signal.data)
+        output_list = torch.zeros(length, num_batch, self.n_out, requires_grad=True).type_as(input_signal.data)
+        input_signal = input_signal.permute(1, 0, 2)
+        const_one = torch.Tensor([1])
+        if self.use_cuda:
+            const_one = const_one.to('cuda')
+        alpha = self.alpha(const_one)
+
+        for t in range(length):
+            hidden = (1 - alpha) * hidden + alpha * self.hid_layer(input_signal[t], hidden)
+            output = self.out_layer(hidden)
+            hidden_list[t] = hidden
+            output_list[t] = output
+        hidden_list = hidden_list.permute(1, 0, 2)
+        output_list = output_list.permute(1, 0, 2)
+        return hidden_list, output_list, hidden
