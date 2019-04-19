@@ -273,11 +273,11 @@ class RecurrentNetTimeFixedOnlyRec(nn.Module):
         else:
             self.alpha.weight = torch.nn.Parameter(torch.from_numpy(alpha_weight).float().to('cpu'))
 
-        tmp = 0
-        for param in self.hid_layer.parameters():
-            if tmp == 0 or tmp == 2:
-                param.requires_grad = False
-            tmp += 1
+        # tmp = 0
+        # for param in self.hid_layer.parameters():
+        #     if tmp == 0 or tmp == 2:
+        #         param.requires_grad = False
+        #     tmp += 1
 
         for param in self.out_layer.parameters():
             param.requires_grad = False
