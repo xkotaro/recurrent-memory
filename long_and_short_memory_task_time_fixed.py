@@ -80,7 +80,7 @@ def main():
 
     os.makedirs("~/models", exist_ok=True)
 
-    alpha = [0.2]*30+[0.8]*470
+    alpha = [0.08]*45+[0.4]*455
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda, alpha_weight=alpha).to(device)
     print(model)
@@ -95,9 +95,9 @@ def main():
             # time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(
                 model.state_dict(),
-                "/root/models/which_pattern_02_30_08_470_epoch_{}.pth"
-                .format(epoch))
-
+                "/root/models/which_pattern_008_45_04_455_{}_epoch_{}.pth"
+                .format(args.model_id, epoch))
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch RNN training')
@@ -124,6 +124,7 @@ if __name__ == '__main__':
                         help='how many batches to wait before logging training status')
     parser.add_argument('--save_model', action='store_true', default=False,
                         help='For Saving the current Model')
+    parser.add_argument('--model_id', type=str)
     args = parser.parse_args()
     print(args)
     main()
