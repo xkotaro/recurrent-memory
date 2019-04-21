@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import argparse
 import os
 from datetime import datetime
@@ -83,6 +81,10 @@ def main():
     alpha = [0.08]*45+[0.4]*455
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda, alpha_weight=alpha).to(device)
+    if args.trained_model:
+        model.load_state_dict(
+            torch.load(args.trained_model))
+
     print(model)
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 
@@ -124,7 +126,9 @@ if __name__ == '__main__':
                         help='how many batches to wait before logging training status')
     parser.add_argument('--save_model', action='store_true', default=False,
                         help='For Saving the current Model')
+    parser.add_argument('--trained_model', type=str, default=None)
     parser.add_argument('--model_id', type=str)
+
     args = parser.parse_args()
     print(args)
     main()
