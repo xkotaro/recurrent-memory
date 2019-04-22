@@ -78,7 +78,8 @@ def main():
 
     os.makedirs("~/models", exist_ok=True)
 
-    alpha = [0.08]*45+[0.4]*455
+    # alpha = [0.08]*45+[0.4]*455
+    alpha = [0.3] * 500
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda, alpha_weight=alpha).to(device)
     if args.trained_model:
@@ -94,11 +95,11 @@ def main():
               n_hid=args.network_size)
 
         if args.save_model and (epoch - 1) % args.savepoint == 0:
-            # time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
+            time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(
                 model.state_dict(),
-                "/root/models/which_pattern_008_45_04_455_{}_epoch_{}.pth"
-                .format(args.model_id, epoch))
+                "/root/models/{}_uniform_03_{}_epoch_{}.pth"
+                .format(time_stamp, args.model_id, epoch))
     
 
 if __name__ == '__main__':

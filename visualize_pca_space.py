@@ -139,15 +139,23 @@ def main():
 
     hidden_list, output, hidden = model(signals, hidden)
 
-    if not args.only_fast_dynamics:
-        X = hidden_list.data.numpy()[0]
-    else:
+    if args.only_fast_dynamics:
         const_one = torch.Tensor([1])
         alpha = model.alpha(const_one)
-
         thresholded_index = [i for i in range(500) if alpha[i] > args.threshold_time_scale]
+        # thresholded_index = [i for i in range(450, 500)]
         only_fast_dynamics = np.array([hidden_list.data.numpy()[0].T[i] for i in thresholded_index])
         X = only_fast_dynamics.T
+    elif args.only_slow_dynamics:
+        const_one = torch.Tensor([1])
+        alpha = model.alpha(const_one)
+        thresholded_index = [i for i in range(500) if alpha[i] < args.threshold_time_scale]
+        # print(thresholded_index)
+        only_fast_dynamics = np.array([hidden_list.data.numpy()[0].T[i] for i in thresholded_index])
+        X = only_fast_dynamics.T
+    else:
+        X = hidden_list.data.numpy()[0]
+
     pca = PCA(n_components=3)
     pca.fit(X)
 
@@ -184,5 +192,6 @@ if __name__ == '__main__':
     parser.add_argument('--time_fixed', action='store_true')
     parser.add_argument('--only_fast_dynamics', action='store_true')
     parser.add_argument('--threshold_time_scale', type=float, default=0.15)
+    parser.add_argument('--only_slow_dynamics', action='store_true')
     args = parser.parse_args()
     main()
