@@ -98,7 +98,7 @@ def main():
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(
                 model.state_dict(),
-                "/root/models/all_03_{}_epoch_{}_{}.pth"
+                "/root/models/all_02_{}_epoch_{}_{}.pth"
                 .format(epoch, args.model_id, time_stamp))
     
 
