@@ -79,7 +79,7 @@ def main():
     os.makedirs("~/models", exist_ok=True)
 
     # alpha = [0.08]*80+[0.4]*420
-    alpha = [0.3] * 500
+    alpha = [0.2] * 500
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda, alpha_weight=alpha).to(device)
     if args.trained_model:
