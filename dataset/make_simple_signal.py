@@ -32,6 +32,8 @@ def simple_signals(n_episodes=100, n_in=100, stim_dur=15,
             Lr = (spon_rate / stim_dur) * np.ones((stim_dur, nneuron))  # resp
             R = np.random.poisson(Lr)
             Rs1.append(R)
+        target = np.repeat(0, stim_dur, axis=0)
+        target_list.append(target)
         L_spont = (spon_rate / (total_dur-stim_dur)) * np.ones((total_dur - stim_dur, nneuron))  # resp
         R = np.random.poisson(L_spont)
         Rs1.append(R)
