@@ -96,7 +96,7 @@ def main():
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(
                 model.state_dict(),
-                "./trained_models/{}_simple_task_all_04_epoch_{}.pth"
+                "./trained_models/{}_simple_task_all_04_epoch_{}_id_{}.pth"
                 .format(time_stamp, epoch, args.model_id))
 
 
