@@ -132,13 +132,13 @@ def main():
         if use_cuda:
             for j in range(each_episodes):
                 total_loss_list.append(np.linalg.norm(
-                    targets.cpu()[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output.cpu()[0].data.numpy().T[0][
-                                                                         36 * i + 21:36 * (i + 1)]))
+                    targets.cpu()[0].data.numpy().T[0][36 * j + 21:36 * (j + 1)] - output.cpu()[0].data.numpy().T[0][
+                                                                         36 * j + 21:36 * (j + 1)]))
         else:
             for j in range(each_episodes):
                 total_loss_list.append(np.linalg.norm(
-                    targets[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output[0].data.numpy().T[0][
-                                                                         36 * i + 21:36 * (i + 1)]))
+                    targets[0].data.numpy().T[0][36 * j + 21:36 * (j + 1)] - output[0].data.numpy().T[0][
+                                                                         36 * j + 21:36 * (j + 1)]))
     print(np.mean(total_loss_list), np.std(total_loss_list))
 
 
