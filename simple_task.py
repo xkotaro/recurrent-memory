@@ -59,6 +59,11 @@ def train(model, device, optimizer, stim_dur, each_episodes, total_dur, epoch, b
                                                           total_dur * (i + 2), :])
         loss.backward()
         optimizer.step()
+        print("target: ", end=" ")
+        print(batched_targets.cpu().data[0][-1].numpy()[0], end=" ")
+        print('\n')
+        print("output: ", end=" ")
+        print(output.cpu().data[0][-1].numpy()[0], end=" ")
         print('Train Epoch: {}, Episode: {}, Loss: {:.6f}'.format(
             epoch, episodes, loss.item()))
 

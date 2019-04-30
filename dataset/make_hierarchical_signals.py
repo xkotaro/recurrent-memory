@@ -43,7 +43,7 @@ def hierarchical_signals(n_episodes=100, n_in=100, stim_dur=15,
 
     G1 = (3.0 / sig1_stim_dur) * np.random.choice([1.0], 1)
     G1 = np.repeat(G1, n_in, axis=0).T
-    G1= np.tile(G1, (sig1_stim_dur, 1))
+    G1 = np.tile(G1, (sig1_stim_dur, 1))
     # signal1 & target
     a = np.random.poisson(0.8, n_episodes)
     Rs1 = []
