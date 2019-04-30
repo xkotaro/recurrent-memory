@@ -77,7 +77,7 @@ def main():
     os.makedirs("./trained_models", exist_ok=True)
 
     # alpha = [0.08]*80+[0.4]*420
-    alpha = [0.4] * 500
+    alpha = [0.4] * args.network_size
     model = RecurrentNet(n_in=100, n_hid=args.network_size, n_out=1,
                          use_cuda=use_cuda, alpha_weight=alpha).to(device)
     if args.trained_model:
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_model', action='store_true', default=False,
                         help='For Saving the current Model')
     parser.add_argument('--trained_model', type=str, default=None)
-    parser.add_argument('--model_id', type=str)
+    parser.add_argument('--model_id', type=str, default='1')
 
     args = parser.parse_args()
     print(args)
