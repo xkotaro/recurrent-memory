@@ -104,8 +104,8 @@ def main():
     model.load_state_dict(torch.load(args.model_path, map_location=device))
     total_loss_list = []
     for i in range(total_length):
-        if i % 100 == 0:
-            print(i)
+        # if i % 100 == 0:
+        #     print(i)
         signal, target = lsm_signals(n_episodes=each_episodes,
                                      stim_dur=7,
                                      sig1_stim_dur=7,
