@@ -91,59 +91,53 @@ def lsm_signals(n_episodes=100, n_in=100, stim_dur=15,
 
 
 def main():
-    n_episodes = args.n_episodes
+    total_length = args.total_length
     each_episodes = args.each_episodes
     spon_rate = args.spon_rate
-    signals = []
-    targets = []
-    for i in range(1):
-        signal, target = lsm_signals(n_episodes=n_episodes,
+    use_cuda = False
+    torch.manual_seed(1)
+    device = torch.device("cuda" if use_cuda else "cpu")
+    # print(device)
+    model = RecurrentNetTimeFixed(n_in=200, n_hid=500, n_out=1,
+                                  use_cuda=use_cuda).to(device)
+
+    model.load_state_dict(torch.load(args.model_path, map_location='cpu'))
+    total_loss_list = []
+    for i in range(total_length):
+        signal, target = lsm_signals(n_episodes=each_episodes,
                                      stim_dur=7,
                                      sig1_stim_dur=7,
                                      resp_dur=5,
                                      each_episodes=each_episodes,
                                      spon_rate=spon_rate)
-        signals.append(signal)
-        targets.append(target)
 
-    use_cuda = False
-    torch.manual_seed(1)
-    device = torch.device("cuda" if use_cuda else "cpu")
-    print(device)
+        signals = np.array([signal])
+        targets = np.array([target])
 
-    model = RecurrentNetTimeFixed(n_in=200, n_hid=500, n_out=1,
-                                  use_cuda=use_cuda).to(device)
+        signals = torch.from_numpy(signals)
+        targets = torch.from_numpy(targets)
 
-    model.load_state_dict(torch.load(args.model_path, map_location='cpu'))
+        hidden = torch.zeros(1, 500, requires_grad=False)
+        hidden = hidden.to(device)
 
-    signals = np.array(signals)
-    targets = np.array(targets)
+        signals = signals.float()
+        targets = targets.float()
 
-    signals = torch.from_numpy(signals)
-    targets = torch.from_numpy(targets)
+        signals, targets = signals.to(device), targets.to(device)
 
-    hidden = torch.zeros(1, 500, requires_grad=False)
-    hidden = hidden.to(device)
+        hidden_list, output, hidden = model(signals, hidden)
 
-    signals = signals.float()
-    targets = targets.float()
-
-    signals, targets = signals.to(device), targets.to(device)
-
-    hidden_list, output, hidden = model(signals, hidden)
-
-    total_loss_list = []
-    for i in range(n_episodes):
-        total_loss_list.append(np.linalg.norm(
-            targets[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output[0].data.numpy().T[0][
-                                                                     36 * i + 21:36 * (i + 1)]))
+        for j in range(each_episodes):
+            total_loss_list.append(np.linalg.norm(
+                targets[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output[0].data.numpy().T[0][
+                                                                         36 * i + 21:36 * (i + 1)]))
     print(np.mean(total_loss_list), np.std(total_loss_list))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Model Evaluation')
     parser.add_argument('-m', '--model_path', type=str)
-    parser.add_argument('-n', '--n_episodes', type=int)
+    parser.add_argument('-t', '--total_length', type=int)
     parser.add_argument('-e', '--each_episodes', type=int)
     parser.add_argument('-s', '--spon_rate', type=float)
     args = parser.parse_args()
