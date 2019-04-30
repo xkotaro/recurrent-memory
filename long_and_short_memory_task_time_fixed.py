@@ -76,10 +76,10 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
     print(device)
 
-    os.makedirs("~/models", exist_ok=True)
+    os.makedirs("./trained_models", exist_ok=True)
 
     # alpha = [0.08]*80+[0.4]*420
-    alpha = [0.1] * 500
+    alpha = [0.4] * 500
     model = RecurrentNetTimeFixed(n_in=200, n_hid=args.network_size, n_out=1,
                                   use_cuda=use_cuda, alpha_weight=alpha).to(device)
     if args.trained_model:
@@ -98,8 +98,8 @@ def main():
             time_stamp = datetime.strftime(datetime.now(pytz.timezone('Japan')), '%m%d%H%M')
             torch.save(
                 model.state_dict(),
-                "/root/models/all_01_{}_epoch_{}_{}.pth"
-                .format(epoch, args.model_id, time_stamp))
+                "./trained_models/{}_all_04_epoch_{}.pth"
+                .format(time_stamp, epoch, args.model_id))
     
 
 if __name__ == '__main__':
