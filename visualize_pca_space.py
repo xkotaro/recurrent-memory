@@ -150,6 +150,7 @@ def main():
         const_one = torch.Tensor([1])
         alpha = model.alpha(const_one)
         thresholded_index = [i for i in range(500) if alpha[i] < args.threshold_time_scale]
+        # thresholded_index = np.random.choice(range(500), 420, replace=False)
         # print(thresholded_index)
         only_fast_dynamics = np.array([hidden_list.data.numpy()[0].T[i] for i in thresholded_index])
         X = only_fast_dynamics.T
