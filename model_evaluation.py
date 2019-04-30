@@ -94,16 +94,18 @@ def main():
     total_length = args.total_length
     each_episodes = args.each_episodes
     spon_rate = args.spon_rate
-    use_cuda = False
+    use_cuda = not args.no_cuda and torch.cuda.is_available()
     torch.manual_seed(1)
     device = torch.device("cuda" if use_cuda else "cpu")
     # print(device)
     model = RecurrentNetTimeFixed(n_in=200, n_hid=500, n_out=1,
                                   use_cuda=use_cuda).to(device)
 
-    model.load_state_dict(torch.load(args.model_path, map_location='cpu'))
+    model.load_state_dict(torch.load(args.model_path, map_location=device))
     total_loss_list = []
     for i in range(total_length):
+        if i % 100 == 0:
+            print(i)
         signal, target = lsm_signals(n_episodes=each_episodes,
                                      stim_dur=7,
                                      sig1_stim_dur=7,
@@ -127,9 +129,15 @@ def main():
 
         hidden_list, output, hidden = model(signals, hidden)
 
-        for j in range(each_episodes):
-            total_loss_list.append(np.linalg.norm(
-                targets[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output[0].data.numpy().T[0][
+        if use_cuda:
+            for j in range(each_episodes):
+                total_loss_list.append(np.linalg.norm(
+                    targets.cpu()[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output.cpu()[0].data.numpy().T[0][
+                                                                         36 * i + 21:36 * (i + 1)]))
+        else:
+            for j in range(each_episodes):
+                total_loss_list.append(np.linalg.norm(
+                    targets[0].data.numpy().T[0][36 * i + 21:36 * (i + 1)] - output[0].data.numpy().T[0][
                                                                          36 * i + 21:36 * (i + 1)]))
     print(np.mean(total_loss_list), np.std(total_loss_list))
 
@@ -140,5 +148,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--total_length', type=int)
     parser.add_argument('-e', '--each_episodes', type=int)
     parser.add_argument('-s', '--spon_rate', type=float)
+    parser.add_argument('--no_cuda', action='store_true', default=False,
+                        help='disables CUDA training')
     args = parser.parse_args()
     main()
