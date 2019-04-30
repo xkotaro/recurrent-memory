@@ -2,7 +2,7 @@ import numpy as np
 
 
 def simple_signals(n_episodes=100, n_in=100, stim_dur=15,
-                   total_dur=36, each_episodes=10, kappa=5.0, spon_rate=0.08, n_stim=3):
+                   total_dur=36, each_episodes=10, kappa=5.0, spon_rate=0.08):
     phi = np.linspace(0, np.pi, n_in)
     n_loc = 1
     nneuron = n_in * n_loc
@@ -18,7 +18,7 @@ def simple_signals(n_episodes=100, n_in=100, stim_dur=15,
     target_list = []
 
     for episode in range(n_episodes):
-        target_list.append(np.zeros(stim_dur * n_stim))
+        target_list.append(np.zeros(stim_dur))
         if a[episode] == 2 or episode % each_episodes == 0:
             accum_signal = np.pi * np.random.rand(1)
             S = np.repeat(accum_signal, n_in, axis=0).T
@@ -32,8 +32,6 @@ def simple_signals(n_episodes=100, n_in=100, stim_dur=15,
             Lr = (spon_rate / stim_dur) * np.ones((stim_dur, nneuron))  # resp
             R = np.random.poisson(Lr)
             Rs1.append(R)
-        target = np.repeat(0, stim_dur, axis=0)
-        target_list.append(target)
         L_spont = (spon_rate / (total_dur-stim_dur)) * np.ones((total_dur - stim_dur, nneuron))  # resp
         R = np.random.poisson(L_spont)
         Rs1.append(R)
