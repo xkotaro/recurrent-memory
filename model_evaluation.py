@@ -91,7 +91,8 @@ def lsm_signals(n_episodes=100, n_in=100, stim_dur=15,
 
 
 def main():
-    total_length = args.total_length
+    batch_size = args.batch_size
+    # total_length = args.total_length
     each_episodes = args.each_episodes
     spon_rate = args.spon_rate
     use_cuda = not args.no_cuda and torch.cuda.is_available()
@@ -101,50 +102,67 @@ def main():
     model = RecurrentNetTimeFixed(n_in=200, n_hid=500, n_out=1,
                                   use_cuda=use_cuda).to(device)
 
+    n_stim=3
+    stim_dur = 7
+
     model.load_state_dict(torch.load(args.model_path, map_location=device))
-    total_loss_list = []
-    hidden = torch.zeros(1, 500, requires_grad=False)
-    hidden = hidden.to(device)
-    for i in range(total_length):
-        # if i % 100 == 0:
-        #     print(i)
-        signal, target = lsm_signals(n_episodes=each_episodes,
+    model.eval()
+    loss = None
+    signals = []
+    targets = []
+    for i in range(batch_size):
+        signal, target = lsm_signals(n_episodes=each_episodes * 10,
                                      stim_dur=7,
                                      sig1_stim_dur=7,
                                      resp_dur=5,
                                      each_episodes=each_episodes,
                                      spon_rate=spon_rate)
 
-        signals = np.array([signal])
-        targets = np.array([target])
+        signals.append(signal)
+        targets.append(target)
+    signals = np.array(signals)
+    targets = np.array(targets)
 
-        signals = torch.from_numpy(signals)
-        targets = torch.from_numpy(targets)
+    signals = torch.from_numpy(signals)
+    targets = torch.from_numpy(targets)
 
-        signals = signals.float()
-        targets = targets.float()
+    hidden = torch.zeros(batch_size, 500, requires_grad=False)
+    hidden = hidden.to(device)
+    one_learning_length = 3 * (5 + 7)
+    for episodes in range(batch_size):
+        batched_signals = \
+            signals[:, episodes * one_learning_length * each_episodes:
+                       (episodes + 1) * one_learning_length * each_episodes, :]
+        batched_targets = \
+            targets[:, episodes * one_learning_length * each_episodes:
+                       (episodes + 1) * one_learning_length * each_episodes, :]
 
-        signals, targets = signals.to(device), targets.to(device)
+        batched_signals = batched_signals.float()
+        batched_targets = batched_targets.float()
+        batched_signals.requires_grad = True
+        batched_signals, batched_targets = batched_signals.to(device), batched_targets.to(device)
 
-        hidden_list, output, hidden = model(signals, hidden)
+        hidden_list, output, hidden = model(batched_signals, hidden)
 
-        if use_cuda:
-            for j in range(each_episodes):
-                total_loss_list.append(np.linalg.norm(
-                    targets.cpu()[0].data.numpy().T[0][36 * j + 21:36 * (j + 1)] - output.cpu()[0].data.numpy().T[0][
-                                                                         36 * j + 21:36 * (j + 1)]))
+        if loss is None:
+            loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
+                                      batched_targets[:, n_stim * stim_dur:one_learning_length, :])
         else:
-            for j in range(each_episodes):
-                total_loss_list.append(np.linalg.norm(
-                    targets[0].data.numpy().T[0][36 * j + 21:36 * (j + 1)] - output[0].data.numpy().T[0][
-                                                                         36 * j + 21:36 * (j + 1)]))
-    print(np.mean(total_loss_list), np.std(total_loss_list))
+            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
+                                      batched_targets[:, n_stim * stim_dur:one_learning_length, :])
+
+        for i in range(each_episodes - 1):
+            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * one_learning_length:
+                                                 one_learning_length * (i + 2), :],
+                                       batched_targets[:, n_stim * stim_dur + (i + 1) * one_learning_length:
+                                                          one_learning_length * (i + 2), :])
+        print(loss.item())
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Model Evaluation')
     parser.add_argument('-m', '--model_path', type=str)
-    parser.add_argument('-t', '--total_length', type=int)
+    parser.add_argument('-b', '--batch_size', type=int)
     parser.add_argument('-e', '--each_episodes', type=int)
     parser.add_argument('-s', '--spon_rate', type=float)
     parser.add_argument('--no_cuda', action='store_true', default=False,
