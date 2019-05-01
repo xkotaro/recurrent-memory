@@ -151,7 +151,7 @@ def main():
                                                           one_learning_length * (i + 1), :])
             total_loss += loss.item()
             # print(loss.item())
-        print(total_loss / (each_episodes*(i+1)))
+        print(total_loss / (each_episodes*(episodes+1)))
     print(total_loss/(each_episodes*batch_size))
 
 
