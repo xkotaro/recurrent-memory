@@ -110,7 +110,7 @@ def main():
     signals = []
     targets = []
     for i in range(batch_size):
-        signal, target = lsm_signals(n_episodes=each_episodes * 10,
+        signal, target = lsm_signals(n_episodes=each_episodes * batch_size,
                                      stim_dur=7,
                                      sig1_stim_dur=7,
                                      resp_dur=5,
@@ -127,6 +127,7 @@ def main():
 
     hidden = torch.zeros(batch_size, 500, requires_grad=False)
     hidden = hidden.to(device)
+    total_loss = 0
     one_learning_length = 3 * (5 + 7)
     for episodes in range(batch_size):
         batched_signals = \
@@ -141,17 +142,17 @@ def main():
         batched_signals.requires_grad = True
         batched_signals, batched_targets = batched_signals.to(device), batched_targets.to(device)
 
+        hidden = hidden.detach()
         hidden_list, output, hidden = model(batched_signals, hidden)
 
-        loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
-                                      batched_targets[:, n_stim * stim_dur:one_learning_length, :])
-
-        for i in range(each_episodes - 1):
-            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * one_learning_length:
+        for i in range(each_episodes):
+            loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * one_learning_length:
                                                  one_learning_length * (i + 2), :],
                                        batched_targets[:, n_stim * stim_dur + (i + 1) * one_learning_length:
                                                           one_learning_length * (i + 2), :])
-        print(loss.item())
+            total_loss += loss.item()
+            print(total_loss)
+    print(total_loss/(each_episodes*batch_size))
 
 
 if __name__ == '__main__':
