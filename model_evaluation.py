@@ -125,8 +125,6 @@ def main():
     signals = torch.from_numpy(signals)
     targets = torch.from_numpy(targets)
 
-    hidden = torch.zeros(batch_size, 500, requires_grad=False)
-    hidden = hidden.to(device)
     total_loss = 0
     one_learning_length = 3 * (5 + 7)
     for episodes in range(batch_size):
@@ -142,7 +140,8 @@ def main():
         batched_signals.requires_grad = True
         batched_signals, batched_targets = batched_signals.to(device), batched_targets.to(device)
 
-        hidden = hidden.detach()
+        hidden = torch.zeros(batch_size, 500, requires_grad=False)
+        hidden = hidden.to(device)
         hidden_list, output, hidden = model(batched_signals, hidden)
 
         for i in range(each_episodes):
@@ -152,6 +151,7 @@ def main():
                                                           one_learning_length * (i + 1), :])
             total_loss += loss.item()
             # print(loss.item())
+        print(total_loss / each_episodes)
     print(total_loss/(each_episodes*batch_size))
 
 
