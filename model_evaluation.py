@@ -146,12 +146,12 @@ def main():
         hidden_list, output, hidden = model(batched_signals, hidden)
 
         for i in range(each_episodes):
-            loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur + (i + 1) * one_learning_length:
-                                                 one_learning_length * (i + 2), :],
-                                       batched_targets[:, n_stim * stim_dur + (i + 1) * one_learning_length:
-                                                          one_learning_length * (i + 2), :])
+            loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur + i * one_learning_length:
+                                                 one_learning_length * (i + 1), :],
+                                       batched_targets[:, n_stim * stim_dur + i * one_learning_length:
+                                                          one_learning_length * (i + 1), :])
             total_loss += loss.item()
-            print(total_loss)
+            print(loss.item())
     print(total_loss/(each_episodes*batch_size))
 
 
