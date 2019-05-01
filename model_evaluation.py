@@ -103,6 +103,8 @@ def main():
 
     model.load_state_dict(torch.load(args.model_path, map_location=device))
     total_loss_list = []
+    hidden = torch.zeros(1, 500, requires_grad=False)
+    hidden = hidden.to(device)
     for i in range(total_length):
         # if i % 100 == 0:
         #     print(i)
@@ -118,9 +120,6 @@ def main():
 
         signals = torch.from_numpy(signals)
         targets = torch.from_numpy(targets)
-
-        hidden = torch.zeros(1, 500, requires_grad=False)
-        hidden = hidden.to(device)
 
         signals = signals.float()
         targets = targets.float()
