@@ -107,7 +107,6 @@ def main():
 
     model.load_state_dict(torch.load(args.model_path, map_location=device))
     model.eval()
-    loss = None
     signals = []
     targets = []
     for i in range(batch_size):
@@ -144,11 +143,7 @@ def main():
 
         hidden_list, output, hidden = model(batched_signals, hidden)
 
-        if loss is None:
-            loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
-                                      batched_targets[:, n_stim * stim_dur:one_learning_length, :])
-        else:
-            loss += torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
+        loss = torch.nn.MSELoss()(output[:, n_stim * stim_dur:one_learning_length, :],
                                       batched_targets[:, n_stim * stim_dur:one_learning_length, :])
 
         for i in range(each_episodes - 1):
