@@ -151,7 +151,7 @@ def main():
                                        batched_targets[:, n_stim * stim_dur + i * one_learning_length:
                                                           one_learning_length * (i + 1), :])
             total_loss += loss.item()
-            print(loss.item())
+            # print(loss.item())
     print(total_loss/(each_episodes*batch_size))
 
 
